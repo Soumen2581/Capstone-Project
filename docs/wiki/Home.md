@@ -219,7 +219,7 @@ Agent Mesh follows an end-to-end modular-monolith pipeline:
 ## Sprint Planning
 
 ### Sprint 1
-1. [Watch Sprint 1 Planning Video](https://www.youtube.com/watch?v=9tktC_Bq3pc)
+1. [Watch Sprint 1 Planning Video](https://www.youtube.com/watch?v=9tktC_Bq3pc) | [Download mp4 File](https://github.com/Soumen2581/Capstone-Project/releases/download/sprint-1/AgentMesh_Sprint1_Planning.mp4)
 
 ## Retrospectives
 
