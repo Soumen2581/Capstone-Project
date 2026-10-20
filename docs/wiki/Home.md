@@ -208,11 +208,6 @@ Agent Mesh follows an end-to-end modular-monolith pipeline:
 - [Watch Sprint 1 Live Demo](https://www.youtube.com/watch?v=Dd_9gl4ELgk) | [Download Sprint 1 Live Demo (mp4)](https://github.com/Soumen2581/Capstone-Project/raw/master/docs/sprints/AgentMesh_Sprint1_Demo.mp4)
 - [Sprint 1 Front-End Source Code](https://github.com/Soumen2581/Capstone-Project/tree/master/frontend) | [Sprint 1 Back-End Source Code](https://github.com/Soumen2581/Capstone-Project/tree/master/backend)
 
-## Live Demo
-
-### Sprint 1
-1. [Watch Sprint 1 Live Demo](https://www.youtube.com/watch?v=Dd_9gl4ELgk) | [Download Sprint 1 Live Demo (mp4)](https://github.com/Soumen2581/Capstone-Project/raw/master/docs/sprints/AgentMesh_Sprint1_Demo.mp4)
-
 ## Sprint Burndown Charts and Completed Tasks
 
 ### Sprint 0
