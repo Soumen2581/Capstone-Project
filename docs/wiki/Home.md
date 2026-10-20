@@ -205,13 +205,13 @@ Agent Mesh follows an end-to-end modular-monolith pipeline:
 - [Deliverable presentation slide as PDF](https://github.com/htmw/F2026-T2-Phoenix/blob/main/docs/sprints/AgentMesh_Sprint0_Presentation_final.pdf)
 
 ### Sprint 1
-- [Watch Sprint 1 Live Demo](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/sprints/AgentMesh_Sprint1_Demo.mp4) | [Download Sprint 1 Live Demo (mp4)](https://github.com/Soumen2581/Capstone-Project/raw/master/docs/sprints/AgentMesh_Sprint1_Demo.mp4)
+- [Watch Sprint 1 Live Demo](https://www.youtube.com/watch?v=Dd_9gl4ELgk) | [Download Sprint 1 Live Demo (mp4)](https://github.com/Soumen2581/Capstone-Project/raw/master/docs/sprints/AgentMesh_Sprint1_Demo.mp4)
 - [Sprint 1 Front-End Source Code](https://github.com/Soumen2581/Capstone-Project/tree/master/frontend) | [Sprint 1 Back-End Source Code](https://github.com/Soumen2581/Capstone-Project/tree/master/backend)
 
 ## Live Demo
 
 ### Sprint 1
-1. [Watch Sprint 1 Live Demo](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/sprints/AgentMesh_Sprint1_Demo.mp4) | [Download Sprint 1 Live Demo (mp4)](https://github.com/Soumen2581/Capstone-Project/raw/master/docs/sprints/AgentMesh_Sprint1_Demo.mp4)
+1. [Watch Sprint 1 Live Demo](https://www.youtube.com/watch?v=Dd_9gl4ELgk) | [Download Sprint 1 Live Demo (mp4)](https://github.com/Soumen2581/Capstone-Project/raw/master/docs/sprints/AgentMesh_Sprint1_Demo.mp4)
 
 ## Sprint Burndown Charts and Completed Tasks
 
