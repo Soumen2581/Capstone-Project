@@ -12,7 +12,8 @@ test.describe("Sprint 2 office surfaces", () => {
     await expect(page.getByTestId("workflow-builder")).toBeVisible();
     await expect(page.getByTestId("builder-request")).toBeVisible();
     await expect(page.getByTestId("builder-palette")).toBeVisible();
-    await expect(page.getByTestId("builder-preview")).toBeVisible();
+    await expect(page.getByTestId("builder-empty")).toBeVisible();
+    await expect(page.getByTestId("builder-preview")).toBeDisabled();
     await expect(page.getByTestId("builder-run")).toBeDisabled();
   });
 

@@ -209,7 +209,7 @@ export function WorkflowBuilder({
         <button
           type="button"
           className="px-btn"
-          disabled={busy || pending}
+          disabled={busy || pending || !request.trim() || nodes.length === 0}
           onClick={() => void runPreview()}
           data-testid="builder-preview"
         >
@@ -218,7 +218,7 @@ export function WorkflowBuilder({
         <button
           type="button"
           className="px-btn primary"
-          disabled={busy || pending}
+          disabled={busy || pending || !request.trim() || nodes.length === 0}
           onClick={() => void runWorkflow()}
           data-testid="builder-run"
         >
