@@ -214,19 +214,35 @@ Agent Mesh follows an end-to-end modular-monolith pipeline:
 1d. [Watch Sprint 1 Demo](https://www.youtube.com/watch?v=Dd_9gl4ELgk) | [Download Sprint 1 Demo (mp4)](https://github.com/Soumen2581/Capstone-Project/raw/master/docs/sprints/AgentMesh_Sprint1_Demo.mp4)
 1e. [Sprint 1 Front-End Source Code](https://github.com/Soumen2581/Capstone-Project/tree/master/frontend) | [Sprint 1 Back-End Source Code](https://github.com/Soumen2581/Capstone-Project/tree/master/backend)
 
+### Sprint 2
+#### Sprint 2 Presentation Video
+- [Watch Sprint 2 Presentation Video](https://www.youtube.com/watch?v=QPmhcV6kkbc)
+- [Download Sprint 2 Presentation Video](https://github.com/Soumen2581/Capstone-Project/releases/download/sprint-2/AgentMesh_Sprint2_Presentation.mp4)
+2a. [View Sprint 2 Presentation Slides as PDF](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/sprints/AgentMesh_Sprint2_Presentation.pdf)
+2b. [Download Sprint 2 Presentation Slides as PowerPoint](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/sprints/AgentMesh_Sprint2_Presentation.pptx)
+#### Live Demo
+2d. [Watch Sprint 2 Demo](https://www.youtube.com/watch?v=73D30fI-xio) | [Download Sprint 2 Demo (mp4)](https://github.com/Soumen2581/Capstone-Project/raw/master/docs/sprints/AgentMesh_Sprint2_Demo.mp4)
+2e. [Sprint 2 Front-End Source Code](https://github.com/Soumen2581/Capstone-Project/tree/master/frontend) | [Sprint 2 Back-End Source Code](https://github.com/Soumen2581/Capstone-Project/tree/master/backend)
+
 ## Sprint Burndown Charts and Completed Tasks
 
 ### Sprint 0
-- Team Working Agreement (signed PDF): [Teamwork_Agreement_Team2_Phoenix.pdf](https://github.com/htmw/F2026-T2-Phoenix/blob/main/docs/agile/Teamwork_Agreement_Team2_Phoenix.pdf)
-- [Sprint 0 Completed Tasks](https://github.com/htmw/F2026-T2-Phoenix/blob/main/docs/wiki/sprints/sprint-0-completed-tasks.jpg) (SCRUM board)
+- Team Working Agreement (signed PDF): [Teamwork_Agreement_Team2_Phoenix.pdf](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/agile/Teamwork_Agreement_Team2_Phoenix.pdf)
+- [Sprint 0 Completed Tasks](https://github.com/htmw/F2026-T2-Phoenix/blob/main/docs/wiki/sprints/sprint-0-completed-tasks.jpg) (SCRUM board — historical copy on course repo)
 
 ### Sprint 1
 - [Sprint 1 Burndown Chart](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/wiki/sprints/sprint-1-burndown.png) | [Sprint 1 Completed Tasks](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/wiki/sprints/sprint-1-completed-tasks.png) (SCRUM board)
+
+### Sprint 2
+- [Sprint 2 Burndown Chart](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/wiki/sprints/sprint-2-burndown.png) | [Sprint 2 Completed Tasks](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/wiki/sprints/sprint-2-completed-tasks.png) (SCRUM board)
 
 ## Sprint Planning
 
 ### Sprint 1
 1. [Watch Sprint 1 Planning Video](https://www.youtube.com/watch?v=9tktC_Bq3pc) | [Download mp4 File](https://github.com/Soumen2581/Capstone-Project/releases/download/sprint-1/AgentMesh_Sprint1_Planning.mp4)
+
+### Sprint 2
+1. [Watch Sprint 2 Planning Video](https://www.youtube.com/watch?v=xgsjFYFc9og) | [Download mp4 File](https://github.com/Soumen2581/Capstone-Project/releases/download/sprint-2/AgentMesh_Sprint2_Planning.mp4)
 
 ## Retrospectives
 
@@ -236,11 +252,14 @@ Agent Mesh follows an end-to-end modular-monolith pipeline:
 ### Sprint 1
 1. [Watch Sprint 1 Retrospective Video](https://www.youtube.com/watch?v=xaOZLz6WfMU) | [Download mp4 File](https://github.com/Soumen2581/Capstone-Project/releases/download/sprint-1/AgentMesh_Sprint1_Retrospective.mp4)
 
+### Sprint 2
+1. [Watch Sprint 2 Retrospective Video](https://www.youtube.com/watch?v=twiKLbI92vU) | [Download mp4 File](https://github.com/Soumen2581/Capstone-Project/releases/download/sprint-2/AgentMesh_Sprint2_Retrospective.mp4)
+
 ## Team Working Agreement
-[Team Working Agreement as PDF](https://github.com/htmw/F2026-T2-Phoenix/blob/main/docs/agile/Teamwork_Agreement_Team2_Phoenix.pdf) | [Team Working Agreement (markdown)](https://github.com/htmw/F2026-T2-Phoenix/blob/main/docs/agile/team-working-agreement.md)
+[Team Working Agreement as PDF](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/agile/Teamwork_Agreement_Team2_Phoenix.pdf) | [Team Working Agreement (markdown)](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/agile/team-working-agreement.md)
 
 ## Diagrams
-- Architecture write-up: [docs/architecture.md](https://github.com/htmw/F2026-T2-Phoenix/blob/main/docs/architecture.md)
+- Architecture write-up: [docs/architecture.md](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/architecture.md)
 - [Architecture Diagram](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/wiki/diagrams/architecture-diagram.png)
 - [Sequence Diagram](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/wiki/diagrams/sequence-diagram.png)
 - [Context Diagram](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/wiki/diagrams/context-diagram.png)
@@ -260,27 +279,35 @@ From Sprint 0 — *Who we're building Agent Mesh for*:
 
 ### Product User Stories and Acceptance Criteria
 - [View User Stories & Acceptance Criteria as PDF](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/agile/user-stories/AgentMesh_UserStories.pdf) | [Download as Excel Workbook](https://github.com/Soumen2581/Capstone-Project/raw/master/docs/agile/user-stories/AgentMesh_UserStories.xlsx)
+- [User Stories v2 (PDF)](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/agile/user-stories/AgentMesh_UserStories_v2.pdf) | [Excel](https://github.com/Soumen2581/Capstone-Project/raw/master/docs/agile/user-stories/AgentMesh_UserStories_v2.xlsx)
 
 ### User Stories and Acceptance Criteria (Sprint-wise)
 
 #### Sprint 1
 - [View Sprint 1 User Stories as PDF](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/agile/user-stories/AgentMesh_Sprint1_UserStories.pdf) | [Download as Excel Workbook](https://github.com/Soumen2581/Capstone-Project/raw/master/docs/agile/user-stories/AgentMesh_Sprint1_UserStories.xlsx)
 
+#### Sprint 2
+- [View Sprint 2 User Stories as PDF](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/agile/user-stories/AgentMesh_Sprint2_UserStories.pdf) | [Download as Excel Workbook](https://github.com/Soumen2581/Capstone-Project/raw/master/docs/agile/user-stories/AgentMesh_Sprint2_UserStories.xlsx)
+
 ### Application Test Cases
 
 #### Sprint 1
 - [View Test Cases as PDF](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/agile/test-cases/AgentMesh_Sprint1_TestCases.pdf) | [Download as Excel Workbook](https://github.com/Soumen2581/Capstone-Project/raw/master/docs/agile/test-cases/AgentMesh_Sprint1_TestCases.xlsx)
 
-## Source Code (Sprint 0)
+#### Sprint 2
+- [View Sprint 2 Test Cases as PDF](https://github.com/Soumen2581/Capstone-Project/blob/master/docs/agile/test-cases/AgentMesh_Sprint2_TestCases.pdf) | [Download as Excel Workbook](https://github.com/Soumen2581/Capstone-Project/raw/master/docs/agile/test-cases/AgentMesh_Sprint2_TestCases.xlsx)
 
-- [Frontend](https://github.com/htmw/F2026-T2-Phoenix/tree/main/frontend)
-- [Backend](https://github.com/htmw/F2026-T2-Phoenix/tree/main/backend)
-- [Docs / ADRs / Agile](https://github.com/htmw/F2026-T2-Phoenix/tree/main/docs)
-- **Monorepo:** [https://github.com/htmw/F2026-T2-Phoenix](https://github.com/htmw/F2026-T2-Phoenix)
+## Source Code (through Sprint 2)
+
+- [Frontend](https://github.com/Soumen2581/Capstone-Project/tree/master/frontend)
+- [Backend](https://github.com/Soumen2581/Capstone-Project/tree/master/backend)
+- [Docs / ADRs / Agile](https://github.com/Soumen2581/Capstone-Project/tree/master/docs)
+- **Personal working monorepo:** [https://github.com/Soumen2581/Capstone-Project](https://github.com/Soumen2581/Capstone-Project)
+- Course team remote (read-only reference): [https://github.com/htmw/F2026-T2-Phoenix](https://github.com/htmw/F2026-T2-Phoenix)
 
 ```bash
-git clone https://github.com/htmw/F2026-T2-Phoenix.git
-cd F2026-T2-Phoenix
+git clone https://github.com/Soumen2581/Capstone-Project.git
+cd Capstone-Project
 cp .env.example .env
 docker compose up --build
 ```
@@ -290,3 +317,5 @@ docker compose up --build
 | http://localhost:3000 | Product site |
 | http://localhost:3000/office | Operator workspace |
 | http://localhost:8000/docs | API docs |
+
+> **CS 691 technical paper:** not authored in-repo; owner will supply separately. See [`MISSING_SUBMISSION_FILES.md`](https://github.com/Soumen2581/Capstone-Project/blob/master/MISSING_SUBMISSION_FILES.md).

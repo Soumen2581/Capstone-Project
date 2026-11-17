@@ -40,24 +40,35 @@ It is not a chat interface that sends the same prompt to several models. The pro
 the orchestration decision: what to run, what *not* to run, in what order, and on which
 model.
 
-> **Status: Sprint 0 complete.** Specialised agents are selected by capability,
-> planned as a DAG, and executed with skips, retries, approval, and synthesis. They also
-> talk directly: durable inboxes, scoped memory, and artifact references. Several
-> providers share one routing layer with logged fallback. Cost is visible from the API
-> and from Prometheus.
+> **Status: Sprint 0–2 implemented (local).** Specialised agents are selected by
+> capability, planned as a DAG, and executed with dependencies, skips, retries,
+> approval gates, and synthesis. Sprint 2 adds durable workflow persistence, richer
+> office Build/Work surfaces (including a workflow builder), Data Analyst capability,
+> and CI with Postgres + Playwright smoke. The product runs **locally via Docker**;
+> there is no claimed production deployment URL in this README.
 >
 > Product shape: an **office of specialists** (brief once; watch desks, mail, and the
-> workflow graph) — inspired by multi-agent office harnesses, implemented as a web
-> orchestrator rather than a desktop CLI wrapper. See
+> workflow graph). See
 > [`docs/adr/0006-office-of-specialists.md`](docs/adr/0006-office-of-specialists.md).
 >
-> Operator identity (`X-Operator-Id`) and workflow ownership shipped in Universal Office
-> Sprint 9; rate limits and soft budgets in Sprint 10; production fail-fast in Sprint 11;
-> HS256 JWT Bearer validation in Sprint 12; Playwright browser smoke (J-2) in Sprint 13 —
-> see ADRs
+> Submission trackers: [`MISSING_SUBMISSION_FILES.md`](MISSING_SUBMISSION_FILES.md)
+> (technical paper is **not** authored here — owner will supply),
+> [`docs/AUDIT_CHECKLIST_SPRINT0-2.md`](docs/AUDIT_CHECKLIST_SPRINT0-2.md),
+> [`docs/KNOWN_ISSUES_AND_CARRY_FORWARD.md`](docs/KNOWN_ISSUES_AND_CARRY_FORWARD.md).
+>
+> Operator identity, rate limits, production fail-fast, and JWT — ADRs
 > [0007](docs/adr/0007-operator-identity.md),
 > [0008](docs/adr/0008-rate-limits.md),
 > [0009](docs/adr/0009-production-fail-fast.md).
+
+## Prerequisites
+
+- Docker Desktop (or Docker Engine) with Compose v2+
+- Optional for host-side tooling: Python 3.12+, Node.js 24+, `make`
+- Optional provider API keys in `.env` (Demo Mode works without them)
+
+Full setup notes: [`docs/DEVELOPER_SETUP.md`](docs/DEVELOPER_SETUP.md).  
+Environment template: [`.env.example`](.env.example).
 
 ## Run with Docker
 
@@ -100,6 +111,28 @@ and rebuild.
 Reasoning behind these choices lives in [`docs/adr/`](docs/adr/), and the full picture in
 [`docs/architecture.md`](docs/architecture.md).
 
+## What ships through Sprint 2 (MVP)
+
+- Capability-based agent selection and DAG planning (sequential / parallel edges).
+- Workflow execution with retries, skip/approve/reject, cancel/resume.
+- PostgreSQL-backed workflow and office state; Redis for ephemeral coordination.
+- Operator office UI at `/office` (roster, Build/Work, live node status).
+- Workflow builder UI wired to backend planning/execution APIs.
+- Data Analyst agent capability for analysis-oriented briefs.
+- Demo Mode (no paid keys) for local demos and CI browser smoke.
+- GitHub Actions: lint, types, pytest (Postgres service), Docker build, gitleaks, Playwright.
+
+## Sprint summaries
+
+| Sprint | Focus (verified in this repo) |
+|--------|-------------------------------|
+| **0** | Monorepo foundation, Compose stack, ADRs, agents, orchestration core, office shell |
+| **1** | Enrollment/auth paths, multi-agent plans, schema validation, workflow tests, frontend office |
+| **2** | DAG persistence & controls, builder/dashboard, Data Analyst, richer CI/e2e, sprint artifacts |
+
+Carry-forward and known gaps: [`docs/KNOWN_ISSUES_AND_CARRY_FORWARD.md`](docs/KNOWN_ISSUES_AND_CARRY_FORWARD.md).  
+Sprint 3+ docs under `docs/SPRINT_3_*` are **planning only** — not implemented in this pass.
+
 ## Repository layout
 
 ```
@@ -108,12 +141,16 @@ backend/            FastAPI application
   app/core/         config, logging, health checks
   tests/            pytest suite
 frontend/           Next.js App Router application
+  e2e/              Playwright specs
 docs/
   architecture.md   current architecture
   adr/              architecture decision records
-  agile/            vision, backlog, sprint plan, Definition of Done, retrospectives
+  agile/            vision, backlog, stories, test cases, retrospectives
+  wiki/             wiki home + diagrams + personas
+  sprints/          presentation slides / demos
 docker-compose.yml  development stack
 Makefile            entry point for every check CI runs
+MISSING_SUBMISSION_FILES.md   attachments you still need to supply (e.g. tech paper)
 ```
 
 ## Local development without Docker

@@ -53,3 +53,6 @@ playwright/.cache/
 # ---- Local data ----
 *.log
 *.sqlite3
+
+# Optional local screenshot helpers (not required to build/run)
+frontend/scripts/capture-sprint2-screens.mjs
