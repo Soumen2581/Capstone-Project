@@ -6,6 +6,9 @@ import {
   BRAND_WORDMARK_SRC,
 } from "@/lib/brand";
 
+/** Wordmark asset is 1024×256 (4:1). */
+const WORDMARK_ASPECT = 4;
+
 export function BrandLogo({
   size = 34,
   className = "",
@@ -20,17 +23,18 @@ export function BrandLogo({
 }) {
   if (variant === "wordmark") {
     const height = size;
-    const width = Math.round(size * 4);
+    const width = Math.round(size * WORDMARK_ASPECT);
     return (
       // eslint-disable-next-line @next/next/no-img-element -- local brand asset
       <img
         src={BRAND_WORDMARK_SRC}
         alt={title}
-        height={height}
         width={width}
+        height={height}
         className={`brand-logo brand-logo-wordmark ${className}`.trim()}
         title={title}
         decoding="async"
+        style={{ width, height, objectFit: "contain" }}
       />
     );
   }
@@ -42,9 +46,10 @@ export function BrandLogo({
       alt=""
       width={size}
       height={size}
-      className={`brand-logo ${className}`.trim()}
+      className={`brand-logo brand-logo-mark ${className}`.trim()}
       title={title}
       decoding="async"
+      style={{ width: size, height: size, objectFit: "contain" }}
     />
   );
 }
