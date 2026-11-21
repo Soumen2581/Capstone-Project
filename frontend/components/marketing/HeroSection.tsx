@@ -3,37 +3,77 @@
 import Link from "next/link";
 
 import { AgentNetwork } from "@/components/marketing/AgentNetwork";
+import FadeContent from "@/components/react-bits/FadeContent";
+import AnimatedContent from "@/components/visuals/interactions/AnimatedContent";
 import { AmbientBackground } from "@/components/visuals/backgrounds/AmbientBackground";
 import { BrandGradientText } from "@/components/visuals/text/BrandGradientText";
-import { BRAND_NAME } from "@/lib/brand";
+import { BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
 
 export function HeroSection() {
   return (
     <section className="mkt-hero" id="top">
-      <AmbientBackground variant="static" className="mkt-hero-ambient" />
+      <AmbientBackground variant="threads" className="mkt-hero-ambient" />
       <div className="mkt-hero-atmosphere" aria-hidden />
-      <div className="mkt-grid mkt-hero-layout">
+
+      <div className="mkt-hero-stage">
         <div className="mkt-hero-copy">
-          <h1 className="mkt-brand-hero">
-            <BrandGradientText>{BRAND_NAME}</BrandGradientText>
-          </h1>
-          <p className="mkt-display">Specialist agents. One accountable result.</p>
-          <p className="mkt-lede">
-            Submit a brief. Agent Mesh plans the work, routes each step to the right model,
-            and returns a single reviewed answer your team can act on.
-          </p>
-          <div className="mkt-hero-cta">
-            <Link href="/login" className="mkt-btn mkt-btn-primary mkt-btn-lg">
-              Open workspace
-            </Link>
-            <a href="#how-it-works" className="mkt-text-link">
-              See how it works
-            </a>
-          </div>
+          <FadeContent trigger="mount" effect="fade" blur={false} duration={0.9} delay={0.05}>
+            <h1 className="mkt-brand-hero">
+              <BrandGradientText>{BRAND_NAME}</BrandGradientText>
+            </h1>
+          </FadeContent>
+
+          <AnimatedContent
+            trigger="mount"
+            direction="vertical"
+            distance={28}
+            duration={0.85}
+            delay={0.18}
+            blur={0}
+          >
+            <p className="mkt-display">Specialist agents. One accountable result.</p>
+          </AnimatedContent>
+
+          <AnimatedContent
+            trigger="mount"
+            direction="vertical"
+            distance={22}
+            duration={0.8}
+            delay={0.32}
+            blur={0}
+          >
+            <p className="mkt-lede">{BRAND_TAGLINE}</p>
+          </AnimatedContent>
+
+          <AnimatedContent
+            trigger="mount"
+            direction="vertical"
+            distance={18}
+            duration={0.75}
+            delay={0.46}
+            blur={0}
+          >
+            <div className="mkt-hero-cta">
+              <Link href="/login" className="mkt-btn mkt-btn-primary mkt-btn-lg">
+                Open workspace
+              </Link>
+              <a href="#how-it-works" className="mkt-text-link">
+                See how it works
+              </a>
+            </div>
+          </AnimatedContent>
         </div>
-        <div className="mkt-hero-visual">
-          <AgentNetwork />
-        </div>
+
+        <FadeContent
+          trigger="mount"
+          effect="fade"
+          blur={false}
+          duration={1.1}
+          delay={0.28}
+          className="mkt-hero-visual"
+        >
+          <AgentNetwork className="mkt-hero-network" />
+        </FadeContent>
       </div>
     </section>
   );

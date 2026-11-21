@@ -79,7 +79,7 @@ export function SettingsPanel({
           </p>
         </div>
         <label className="field">
-          <span>Operator ID</span>
+          <span>Workspace name</span>
           <input
             type="text"
             value={actor}

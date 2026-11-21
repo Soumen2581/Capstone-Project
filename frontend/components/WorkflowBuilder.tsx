@@ -2,7 +2,6 @@
 
 import { useCallback, useMemo, useState } from "react";
 
-import { BrandGradientText } from "@/components/visuals/text/BrandGradientText";
 import type { AgentSummary, PlanPreview } from "@/lib/types";
 
 type DraftNode = {
@@ -120,7 +119,7 @@ export function WorkflowBuilder({
     <section className="panel" data-testid="workflow-builder">
       <div className="panel-head">
         <h2 className="panel-title" style={{ margin: 0 }}>
-          <BrandGradientText>Workflow builder</BrandGradientText>
+          Workflow builder
         </h2>
         <p className="meta" style={{ margin: 0 }}>
           Compose a specialist roster, preview the planned DAG, then run it.

@@ -34,12 +34,10 @@ export function AgentCard({
   item,
   selected,
   onSelect,
-  staggerMs = 0,
 }: {
   item: AgentOfficeView;
   selected: boolean;
   onSelect: () => void;
-  staggerMs?: number;
 }) {
   const { agent, presence } = item;
   const task =
@@ -51,10 +49,9 @@ export function AgentCard({
   return (
     <button
       type="button"
-      className={`agent-card agent-glare ${selected ? "on" : ""}`}
+      className={`agent-card ${selected ? "on" : ""}`}
       onClick={onSelect}
       aria-pressed={selected}
-      style={{ ["--stagger" as string]: `${staggerMs}ms` }}
     >
       <div className="agent-card-head">
         <p className="agent-card-name">{shortAgentName(agent.id)}</p>
@@ -82,7 +79,6 @@ export function AgentStrip({
   if (agents.length === 0) {
     return (
       <div className="empty-state">
-        <div className="empty-orb" aria-hidden />
         <h3>No agents yet</h3>
         <p>Agents appear here once the office is ready.</p>
       </div>
@@ -91,13 +87,12 @@ export function AgentStrip({
 
   return (
     <div className="agent-strip" role="list">
-      {agents.map((item, index) => (
+      {agents.map((item) => (
         <div key={item.agent.id} role="listitem">
           <AgentCard
             item={item}
             selected={selected === item.agent.id}
             onSelect={() => onSelect(item.agent.id)}
-            staggerMs={index * 45}
           />
         </div>
       ))}

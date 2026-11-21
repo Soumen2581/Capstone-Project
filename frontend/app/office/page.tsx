@@ -623,7 +623,7 @@ function OfficeWorkspace() {
                 checked={generative}
                 onChange={(event) => setGenerative(event.target.checked)}
               />
-              Design a bespoke team for this task (beta), spawns up to 4 specialists on the cheapest model
+              Design a bespoke team for this task — spawns up to 4 specialists on the cheapest model
             </label>
             <TaskComposer
               compact={composerMode === "followup" || !!workflow}

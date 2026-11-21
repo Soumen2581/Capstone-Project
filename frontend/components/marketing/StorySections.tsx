@@ -2,10 +2,15 @@
 
 import type { ReactNode } from "react";
 
+import FadeContent from "@/components/react-bits/FadeContent";
 import { OFFICE_AGENTS } from "@/lib/design/agents";
 
-function Reveal({ children }: { children: ReactNode; delay?: number }) {
-  return <div>{children}</div>;
+function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
+  return (
+    <FadeContent trigger="scroll" effect="fade" blur={false} duration={0.7} delay={delay} threshold={0.15}>
+      {children}
+    </FadeContent>
+  );
 }
 
 export function IdeaSection() {

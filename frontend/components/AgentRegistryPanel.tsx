@@ -4,6 +4,44 @@ import { FormEvent, useState } from "react";
 
 import type { AgentEnrollment, AgentSummary } from "@/lib/types";
 
+/** Default hand-off contract so enrolled agents are not schema-empty. */
+const DEFAULT_INPUT_SCHEMA: Record<string, unknown> = {
+  type: "object",
+  description: "Operator hand-off document for an enrolled agent.",
+  required: ["objective"],
+  additionalProperties: false,
+  properties: {
+    objective: {
+      type: "string",
+      minLength: 1,
+      description: "Natural-language objective for this agent step.",
+    },
+    parameters: {
+      type: "object",
+      description: "Operator or planner parameters for this step.",
+      additionalProperties: true,
+    },
+    upstream: {
+      type: "array",
+      description: "Validated payloads from upstream workflow nodes.",
+      items: {
+        type: "object",
+        required: ["node_key", "agent_id", "payload"],
+        properties: {
+          node_key: { type: "string", minLength: 1 },
+          agent_id: { type: "string", minLength: 1 },
+          payload: { type: "object" },
+        },
+        additionalProperties: false,
+      },
+    },
+    feedback: {
+      type: ["string", "null"],
+      description: "Retry feedback from a prior failed attempt, if any.",
+    },
+  },
+};
+
 const DEFAULT_OUTPUT_SCHEMA = JSON.stringify(
   {
     type: "object",
@@ -74,7 +112,7 @@ export function AgentRegistryPanel({
           .split(",")
           .map((model) => model.trim())
           .filter(Boolean),
-        input_schema: {},
+        input_schema: DEFAULT_INPUT_SCHEMA,
         output_schema: schema,
         cost_profile: { max_cost_usd: Number.isFinite(cost) ? cost : 0.5, timeout_seconds: 120 },
       });
