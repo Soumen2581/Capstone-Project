@@ -5,7 +5,7 @@ Specialist AI agents, coordinated for real work.
 Submit one brief. Agent Mesh selects the right specialists, builds a workflow, routes each step to a model provider, and returns a single synthesized result.
 
 **Personal repository:** https://github.com/Soumen2581/Capstone-Project  
-**Wiki home:** [`docs/wiki/Home.md`](docs/wiki/Home.md)  
+**Wiki:** https://github.com/Soumen2581/Capstone-Project/wiki  
 **Pending uploads:** [`MISSING_SUBMISSION_FILES.md`](MISSING_SUBMISSION_FILES.md)  
 **Audit checklist (Sprint 0–2):** [`docs/AUDIT_CHECKLIST_SPRINT0-2.md`](docs/AUDIT_CHECKLIST_SPRINT0-2.md)
 
@@ -108,7 +108,7 @@ Production URL (when live): see pending row in [`MISSING_SUBMISSION_FILES.md`](M
 
 | Doc | Link |
 |-----|------|
-| Wiki | [`docs/wiki/Home.md`](docs/wiki/Home.md) |
+| Wiki | [GitHub Wiki](https://github.com/Soumen2581/Capstone-Project/wiki) |
 | Architecture | [`docs/architecture.md`](docs/architecture.md) |
 | ADRs | [`docs/adr/`](docs/adr/) |
 | Sprint 0–2 audit | [`docs/AUDIT_CHECKLIST_SPRINT0-2.md`](docs/AUDIT_CHECKLIST_SPRINT0-2.md) |
