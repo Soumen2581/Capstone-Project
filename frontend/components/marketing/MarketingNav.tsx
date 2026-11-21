@@ -6,7 +6,6 @@ import { Menu, X } from "lucide-react";
 
 import { BrandWordmark } from "@/components/BrandLogo";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { BRAND_NAME } from "@/lib/brand";
 
 const LINKS = [
   { href: "#agents", label: "Agents" },

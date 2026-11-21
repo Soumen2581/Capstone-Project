@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
 
 import { BrandLogo } from "@/components/BrandLogo";
+import { AmbientBackground } from "@/components/visuals/backgrounds/AmbientBackground";
+import { BlurText } from "@/components/visuals/text/BlurText";
 import { getOperatorId, loginWithGoogle, setOperatorId } from "@/lib/api";
 import { BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
 
@@ -61,10 +63,13 @@ export default function LoginPage() {
 
   return (
     <main className="login-shell" data-testid="login-page">
+      <AmbientBackground variant="threads" />
       <section className="login-card">
         <BrandLogo size={48} variant="mark" />
         <h1>{BRAND_NAME}</h1>
-        <p>{BRAND_TAGLINE}</p>
+        <p className="login-tagline">
+          <BlurText delay={0.04}>{BRAND_TAGLINE}</BlurText>
+        </p>
 
         {GOOGLE_CLIENT_ID ? (
           <>
