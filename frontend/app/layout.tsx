@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { DM_Sans, Instrument_Sans } from "next/font/google";
 
@@ -42,6 +42,12 @@ export const metadata: Metadata = {
     description: BRAND_TAGLINE,
     images: [BRAND_WORDMARK_SRC],
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

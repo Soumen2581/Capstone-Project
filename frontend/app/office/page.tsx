@@ -45,6 +45,7 @@ import {
   updateRoutingPolicy,
 } from "@/lib/api";
 import {
+  conversationTips,
   demoOnly,
   getFreeOnly,
   hasUsableModels,
@@ -311,6 +312,28 @@ function OfficeWorkspace() {
         if (budget !== null && (!Number.isFinite(budget) || budget <= 0)) {
           throw new Error("Budget must be a positive number.");
         }
+        // Generative endpoint has no parent link yet — keep the open thread on screen
+        // and continue from a normal follow-up task so history stays one chat.
+        if (workflow) {
+          const created = await submitTask({
+            request: request.trim(),
+            max_cost_usd: budget,
+            require_approval: false,
+            agent_ids: null,
+            routing_strategy: "auto",
+            shared_model: null,
+            model_overrides: {},
+            parent_workflow_id: workflow.id,
+          });
+          setThreadHistory((history) => [...history, workflow]);
+          setWorkflow(created);
+          setComposerMode("followup");
+          setRequest("");
+          setTab("home");
+          void refreshOffice();
+          void refreshConversations();
+          return;
+        }
         const created = await submitGenerativeTask({ request: request.trim(), max_cost_usd: budget });
         setThreadHistory([]);
         setWorkflow(created);
@@ -347,9 +370,9 @@ function OfficeWorkspace() {
       if (routingStrategy === "one" && !sharedModel) {
         throw new Error("One-model routing needs a shared model.");
       }
-      // A follow-up continues the active turn: link to it so the backend threads its
-      // result into the new plan, and move it into the visible history.
-      const parentWorkflow = composerMode === "followup" ? workflow : null;
+      // Any send while a chat is open continues that chat (one thread, full history).
+      // "New chat" / "New request" clears workflow first when the operator wants a fresh one.
+      const parentWorkflow = workflow;
       const created = await submitTask({
         request: request.trim(),
         max_cost_usd: parsedCost,
@@ -360,7 +383,7 @@ function OfficeWorkspace() {
         model_overrides: routingStrategy === "mixed" ? overrides : {},
         parent_workflow_id: parentWorkflow ? parentWorkflow.id : null,
       });
-      setThreadHistory((history) => (parentWorkflow ? [...history, parentWorkflow] : history));
+      setThreadHistory((history) => (parentWorkflow ? [...history, parentWorkflow] : []));
       setWorkflow(created);
       setComposerMode("followup");
       setRequest("");
@@ -602,7 +625,7 @@ function OfficeWorkspace() {
       {tab === "home" && (
         <div className="workspace chat">
           <ConversationSidebar
-            conversations={conversations}
+            conversations={conversationTips(conversations)}
             activeId={workflow?.id ?? null}
             onSelect={(id) => void openConversation(id)}
             onNew={startNewChat}
@@ -614,19 +637,16 @@ function OfficeWorkspace() {
               busy={busy}
               onOpenWork={() => setTab("work")}
             />
-            <label
-              className="muted"
-              style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 12px", cursor: "pointer" }}
-            >
+            <label className="chat-option muted">
               <input
                 type="checkbox"
                 checked={generative}
                 onChange={(event) => setGenerative(event.target.checked)}
               />
-              Design a bespoke team for this task — spawns up to 4 specialists on the cheapest model
+              <span>Design a bespoke team for this task (up to 4 specialists)</span>
             </label>
             <TaskComposer
-              compact={composerMode === "followup" || !!workflow}
+              compact={!!workflow}
               request={request}
               onRequest={setRequest}
               busy={busy}

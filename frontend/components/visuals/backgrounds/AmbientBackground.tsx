@@ -30,13 +30,20 @@ export type AmbientVariant = "none" | "veil" | "threads" | "dots" | "static";
 export function AmbientBackground({
   variant = "veil",
   className = "",
+  active = true,
+  intensity = "default",
 }: {
   variant?: AmbientVariant;
   className?: string;
+  /** When false, pause WebGL / keep layer quiet (e.g. off-screen sections). */
+  active?: boolean;
+  /** Quieter look for stacked landing sections. */
+  intensity?: "default" | "subtle";
 }) {
   const reduced = usePrefersReducedMotion();
   const lowPower = useLowPowerVisuals();
   const visible = useDocumentVisible();
+  const running = active && visible;
 
   const resolved = useMemo<AmbientVariant>(() => {
     if (variant === "none") return "none";
@@ -49,18 +56,20 @@ export function AmbientBackground({
 
   if (resolved === "none") return null;
 
+  const subtle = intensity === "subtle";
+
   return (
     <div className={`am-ambient ${className}`.trim()} aria-hidden>
       {resolved === "veil" && (
         <DarkVeil
           color={BRAND_COLORS.periwinkle}
-          speed={0.35}
-          brightness={0.45}
-          glow={0.35}
-          opacity={0.55}
+          speed={subtle ? 0.22 : 0.35}
+          brightness={subtle ? 0.32 : 0.45}
+          glow={subtle ? 0.22 : 0.35}
+          opacity={subtle ? 0.32 : 0.55}
           mouseInteraction={false}
-          paused={!visible}
-          quality={0.55}
+          paused={!running}
+          quality={subtle ? 0.4 : 0.55}
           className="am-ambient-canvas"
         />
       )}
@@ -68,19 +77,24 @@ export function AmbientBackground({
         <Threads
           color={BRAND_COLORS.periwinkle}
           accentColor={BRAND_COLORS.mintBright}
-          amplitude={0.55}
+          amplitude={subtle ? 0.35 : 0.55}
           distance={0.25}
           enableMouseInteraction={false}
-          speed={0.4}
-          opacity={0.45}
-          brightness={0.7}
-          lineCount={28}
-          paused={!visible}
+          speed={subtle ? 0.28 : 0.4}
+          opacity={subtle ? 0.28 : 0.45}
+          brightness={subtle ? 0.55 : 0.7}
+          lineCount={subtle ? 18 : 28}
+          paused={!running}
           className="am-ambient-canvas"
         />
       )}
       {resolved === "dots" && (
-        <DotGrid color="rgba(91, 124, 250, 0.28)" gap={26} opacity={0.5} className="am-ambient-canvas" />
+        <DotGrid
+          color="rgba(91, 124, 250, 0.28)"
+          gap={subtle ? 30 : 26}
+          opacity={subtle ? 0.35 : 0.5}
+          className="am-ambient-canvas"
+        />
       )}
       {resolved === "static" && <div className="am-ambient-static" />}
       <div className="am-ambient-veil" />

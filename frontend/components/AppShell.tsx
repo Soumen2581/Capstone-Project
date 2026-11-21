@@ -106,6 +106,15 @@ export function AppShell({
             >
               {mobileOpen ? <X size={16} /> : <Menu size={16} />}
             </button>
+            <button
+              type="button"
+              className="sidebar-toggle desktop-nav-toggle"
+              aria-label={collapsed ? "Expand navigation" : "Minimize navigation"}
+              title={collapsed ? "Expand navigation" : "Minimize navigation"}
+              onClick={() => setCollapsed((value) => !value)}
+            >
+              {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
+            </button>
             <LayoutDashboard size={16} aria-hidden className="app-nav-icon" />
             <div className="brand-block">
               <h1 className="brand" data-testid="brand">
@@ -115,7 +124,7 @@ export function AppShell({
             </div>
           </div>
           <div className="app-topbar-actions">
-            <Link href="/" className="px-btn ghost">
+            <Link href="/" className="px-btn ghost topbar-site-link">
               Product site
             </Link>
             <button type="button" className="px-btn primary" onClick={onNewTask}>
@@ -126,20 +135,28 @@ export function AppShell({
 
         {mobileOpen && (
           <nav className="mobile-nav-drawer" aria-label="Mobile sections">
-            {NAV.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={tab === item.id ? "tab on" : "tab"}
-                onClick={() => {
-                  onTab(item.id);
-                  setMobileOpen(false);
-                }}
-              >
-                {item.label}
-              </button>
-            ))}
-            <ThemeToggle compact />
+            <div className="mobile-nav-grid">
+              {NAV.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className={tab === item.id ? "mobile-nav-item on" : "mobile-nav-item"}
+                    onClick={() => {
+                      onTab(item.id);
+                      setMobileOpen(false);
+                    }}
+                  >
+                    <Icon size={18} aria-hidden />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="mobile-nav-foot">
+              <ThemeToggle compact />
+            </div>
           </nav>
         )}
 

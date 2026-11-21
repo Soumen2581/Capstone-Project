@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent } from "react";
+import { FormEvent, KeyboardEvent, useRef } from "react";
 
 import type { AgentSummary, RoutingStrategy } from "@/lib/types";
 
@@ -70,6 +70,19 @@ export function TaskComposer({
   compact?: boolean;
 }) {
   const roster = pickAgents ? selectedAgents : agents.map((agent) => agent.id);
+  const formRef = useRef<HTMLFormElement>(null);
+  const canSubmit =
+    !busy && request.trim().length >= 3 && !noModels && !freeOnlyBlocked;
+
+  const onBriefKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) {
+      return;
+    }
+    event.preventDefault();
+    if (canSubmit) {
+      formRef.current?.requestSubmit();
+    }
+  };
 
   return (
     <section className={`panel composer-hero ${compact ? "composer-compact" : ""}`}>
@@ -104,7 +117,12 @@ export function TaskComposer({
 
       {freeOnlyBlocked && <p className="banner warn">{freeOnlyBlocked}</p>}
 
-      <form onSubmit={onSubmit} className="task-form" data-testid="command-form">
+      <form
+        ref={formRef}
+        onSubmit={onSubmit}
+        className="task-form"
+        data-testid="command-form"
+      >
         <label className="field">
           <span className="visually-hidden">Brief</span>
           <textarea
@@ -112,6 +130,7 @@ export function TaskComposer({
             data-testid="request-input"
             value={request}
             onChange={(event) => onRequest(event.target.value)}
+            onKeyDown={onBriefKeyDown}
             rows={compact ? 2 : 4}
             required
             minLength={3}
@@ -147,7 +166,7 @@ export function TaskComposer({
             type="submit"
             className="px-btn primary"
             data-testid="assign-work"
-            disabled={busy || request.trim().length < 3 || noModels || !!freeOnlyBlocked}
+            disabled={!canSubmit}
           >
             {busy ? "Starting…" : compact ? "Send" : "Start task"}
           </button>

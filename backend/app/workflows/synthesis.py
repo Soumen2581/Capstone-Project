@@ -65,7 +65,7 @@ def synthesise(
 
 
 def _answer(plan: WorkflowPlan, outputs: dict[str, AgentOutput]) -> str:
-    """The human-readable result — prefer deliverables over one-line summaries."""
+    """The human-readable result — prefer one clean reader-facing answer."""
     for node in plan.nodes:
         output = outputs.get(node.key)
         if output is None or not output.succeeded:
@@ -73,6 +73,11 @@ def _answer(plan: WorkflowPlan, outputs: dict[str, AgentOutput]) -> str:
         document = output.payload.get("document")
         if isinstance(document, str) and document.strip():
             return document.strip()
+
+    # Prefer an explicit `answer` from a writer desk over a collage of research notes.
+    prose = _prose_answers(plan, outputs)
+    if prose:
+        return prose
 
     # Single successful agent: surface its full deliverable, not a collage heading.
     succeeded = [
@@ -96,6 +101,32 @@ def _answer(plan: WorkflowPlan, outputs: dict[str, AgentOutput]) -> str:
     if sections:
         return "\n\n".join(sections)
     return "The workflow completed but no agent produced a readable result."
+
+
+def _prose_answers(plan: WorkflowPlan, outputs: dict[str, AgentOutput]) -> str | None:
+    """Pick one `answer` field when present, preferring writer/general desks."""
+    found: list[tuple[str, str]] = []
+    for node in plan.nodes:
+        output = outputs.get(node.key)
+        if output is None or not output.succeeded:
+            continue
+        value = output.payload.get("answer")
+        if isinstance(value, str) and value.strip():
+            found.append((output.agent_id, value.strip()))
+    if not found:
+        return None
+    preferred = (
+        "documentation-agent",
+        "general-agent",
+        "data-analyst-agent",
+        "planning-agent",
+    )
+    for agent_id in preferred:
+        for candidate_id, text in found:
+            if candidate_id == agent_id:
+                return text
+    # Later nodes usually refine earlier research — take the last answer.
+    return found[-1][1]
 
 
 def _deliverable(payload: dict[str, object]) -> str:

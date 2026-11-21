@@ -66,6 +66,9 @@ Aligned with [`docs/AUDIT_CHECKLIST_SPRINT0-2.md`](docs/AUDIT_CHECKLIST_SPRINT0-
 - PostgreSQL-backed workflows; Redis for queues and rate limits
 - Provider routing (Gemini, Groq, OpenAI, Claude, OpenRouter, …) + Free Only
 - Workspace: Command, Build, Work, Messages, Agents, Settings
+- Continuous Command chat (history stays in one thread; Enter to send)
+- Clean markdown answers; downloadable files when the brief asks for a file
+- Product site: section scroll flow, section motion, React Bits ambient backgrounds
 - Google sign-in or local operator access for development
 - CI: lint, types, pytest, Docker, gitleaks, Playwright smoke
 

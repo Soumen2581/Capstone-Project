@@ -111,15 +111,19 @@ Improved **consistency**, **scalability**, and reduced **wasted spend** through 
 </p>
 
 <p align="center">
+  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/02-agents-roster.png" alt="Specialist agent roster" width="900" />
+</p>
+
+<p align="center">
   <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/04-agent-mesh.png" alt="Agent collaboration mesh" width="900" />
 </p>
 
 <p align="center">
-  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/06-office-home.png" alt="Command workspace" width="900" />
+  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/05-one-workspace.png" alt="Workspace product tour" width="900" />
 </p>
 
 <p align="center">
-  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/10-office-build.png" alt="Workflow builder" width="900" />
+  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/06-office-home.png" alt="Command workspace" width="900" />
 </p>
 
 <p align="center">
@@ -137,18 +141,18 @@ More captures: [`docs/images/`](https://github.com/Soumen2581/Capstone-Project/t
 ### High-level architecture
 Agent Mesh follows an end-to-end modular-monolith pipeline (verified through Sprint 2; product polish continues on personal `master` / feature branches):
 
-- **Frontend (Web UI):** Next.js (App Router) + TypeScript + CSS — marketing site, `/login`, `/office` workspace (Command, Build, Work, Messages, Agents, Settings)
+- **Frontend (Web UI):** Next.js (App Router) + TypeScript + CSS — product site with section scroll/motion and React Bits ambients; `/login`; `/office` workspace (Command, Build, Work, Messages, Agents, Settings)
 - **Backend API:** Python + FastAPI + operator identity / Google session JWT — orchestration, agent registry, workflow engine, provider adapters, rate limits
 - **Orchestration / AI layer:** Capability analysis + multi-agent DAG engine — selects agents, routes models, validates outputs, synthesises a final result; optional generative teams
 - **Data Layer:** PostgreSQL + Redis — durable workflows/results in Postgres; queues, locks, and cache in Redis
 
 ### Core workflow
-1. **Brief** — Operator submits a task (or follow-up) in `/office`
+1. **Brief** — Operator submits a task (or follow-up) in `/office` (Enter to send; history stays in one chat)
 2. **Analyse** — Capability analysis determines which specialist agents are required
 3. **Plan** — A workflow DAG is built (sequence, parallel joins, conditionals / approval gates)
 4. **Route** — Each agent is bound to a suitable model/provider
 5. **Execute** — Agents run with retries, skips, hand-offs, and optional human approval
-6. **Synthesise** — Validated outputs are combined into one result in the chat thread
+6. **Synthesise** — Validated outputs become one clean chat answer (markdown); file briefs get a download
 7. **Persist** — Workflow, executions, cost, and conversation history are stored in PostgreSQL
 
 ### MVP direction
@@ -156,7 +160,7 @@ Agent Mesh follows an end-to-end modular-monolith pipeline (verified through Spr
 - Capability-driven agent selection
 - Workflow engine (DAG: sequential / parallel / conditional)
 - Multi-provider model routing with fallback
-- Continuous chat threads
+- Continuous chat threads with readable replies and optional file downloads
 - Optional generative agent teams (Level 3)
 - Docker Compose one-command local run
 - Offline demo mode when no API keys are configured

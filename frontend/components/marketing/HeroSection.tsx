@@ -75,6 +75,11 @@ export function HeroSection() {
           <AgentNetwork className="mkt-hero-network" />
         </FadeContent>
       </div>
+
+      <a href="#idea" className="mkt-scroll-cue" aria-label="Scroll to next section">
+        <span className="mkt-scroll-cue-line" aria-hidden />
+        <span>Scroll</span>
+      </a>
     </section>
   );
 }

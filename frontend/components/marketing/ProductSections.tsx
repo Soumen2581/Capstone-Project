@@ -1,20 +1,12 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 
-import FadeContent from "@/components/react-bits/FadeContent";
 import { WORKFLOW_STEPS } from "@/lib/design/agents";
 import { AgentNetwork } from "@/components/marketing/AgentNetwork";
-
-function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
-  return (
-    <FadeContent trigger="scroll" effect="fade" blur={false} duration={0.7} delay={delay} threshold={0.15}>
-      {children}
-    </FadeContent>
-  );
-}
+import { SectionAmbient } from "@/components/marketing/SectionAmbient";
+import { SectionReveal as Reveal } from "@/components/marketing/SectionReveal";
 
 export function WorkflowSection() {
   const reduce = useReducedMotion();
@@ -30,6 +22,7 @@ export function WorkflowSection() {
 
   return (
     <section className="mkt-section" id="how-it-works">
+      <SectionAmbient variant="dots" />
       <div className="mkt-grid">
         <Reveal>
           <p className="mkt-kicker">03 · The workflow</p>
@@ -53,6 +46,7 @@ export function WorkflowSection() {
 export function CommunicationSection() {
   return (
     <section className="mkt-section mkt-section-dark" id="communication">
+      <SectionAmbient variant="threads" />
       <div className="mkt-grid">
         <Reveal>
           <p className="mkt-kicker light">04 · Agents talk to each other</p>
@@ -114,6 +108,7 @@ export function WorkspaceSection() {
 
   return (
     <section className="mkt-section" id="workspace">
+      <SectionAmbient variant="veil" />
       <div className="mkt-grid">
         <Reveal>
           <p className="mkt-kicker">05 · One workspace</p>
@@ -158,6 +153,7 @@ export function WorkspaceSection() {
 export function ModelsSection() {
   return (
     <section className="mkt-section mkt-section-muted">
+      <SectionAmbient variant="dots" />
       <div className="mkt-grid mkt-two">
         <Reveal>
           <p className="mkt-kicker">06 · AI models</p>
@@ -188,6 +184,7 @@ export function ModelsSection() {
 export function FreeAISection() {
   return (
     <section className="mkt-section">
+      <SectionAmbient variant="threads" />
       <div className="mkt-grid mkt-section-narrow">
         <Reveal>
           <p className="mkt-kicker">07 · Free AI</p>

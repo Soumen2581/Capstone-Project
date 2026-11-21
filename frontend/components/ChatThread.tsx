@@ -1,50 +1,67 @@
 "use client";
 
 import type { WorkflowView } from "@/lib/types";
-import { formatWhen, shortAgentName } from "@/lib/office";
+import { formatWhen } from "@/lib/office";
 import { BrandLogo } from "@/components/BrandLogo";
-import { ProviderIcon, providerIdFromModel } from "@/components/ProviderIcon";
+import { ChatMarkdown } from "@/components/ChatMarkdown";
+import { FileDeliverables } from "@/components/FileDeliverables";
+import {
+  extractDeliverableFiles,
+  fileReplySummary,
+  requestWantsFile,
+  shortDescription,
+} from "@/lib/deliverables";
 import { BRAND_NAME } from "@/lib/brand";
 
-function resultText(workflow: WorkflowView): string | null {
+function resultText(workflow: WorkflowView, asFile: boolean): string | null {
   const result = workflow.final_result;
-  const fromNodes = workflow.nodes
-    .map((node) => nodeBody(node.result))
-    .filter((text): text is string => Boolean(text && text.trim()));
-
-  const richestNode = fromNodes.reduce<string | null>((best, text) => {
-    if (!best || text.length > best.length) {
-      return text;
+  if (asFile) {
+    const files = extractDeliverableFiles(
+      result,
+      ...workflow.nodes.map((node) => node.result),
+    );
+    if (files.length > 0 || (result && typeof result.summary === "string")) {
+      return fileReplySummary(result, files);
     }
-    return best;
-  }, null);
+  }
 
+  // Trust the workflow's synthesised `answer` — do not swap in a longer intermediate
+  // node body (that often mixes drafts and invents details).
   if (result && Object.keys(result).length > 0) {
     if (typeof result.answer === "string" && result.answer.trim()) {
-      const answer = result.answer.trim();
-      // Prefer a fuller node deliverable when synthesis only kept a short summary label.
-      if (richestNode && richestNode.length > answer.length + 40) {
-        return richestNode;
+      if (asFile) {
+        return fileReplySummary(result, extractDeliverableFiles(result));
       }
-      return answer;
+      return result.answer.trim();
     }
     if (typeof result.summary === "string" && result.summary.trim()) {
-      return richestNode && richestNode.length > result.summary.length
-        ? richestNode
-        : result.summary;
+      if (asFile) {
+        return shortDescription(result.summary);
+      }
+      return result.summary.trim();
     }
   }
 
-  if (richestNode) {
-    return richestNode;
+  const fromNodes = workflow.nodes
+    .map((node) => nodeBody(node.result, asFile))
+    .filter((text): text is string => Boolean(text && text.trim()));
+  if (fromNodes[0]) {
+    return fromNodes[0];
   }
   if (result && Object.keys(result).length > 0) {
-    return JSON.stringify(result, null, 2);
+    return asFile ? fileReplySummary(result, []) : JSON.stringify(result, null, 2);
   }
   return null;
 }
 
-function nodeBody(result: Record<string, unknown>): string | null {
+function nodeBody(result: Record<string, unknown>, asFile: boolean): string | null {
+  if (asFile) {
+    const files = extractDeliverableFiles(result);
+    if (files.length > 0 || typeof result.summary === "string") {
+      return fileReplySummary(result, files);
+    }
+  }
+
   for (const key of ["answer", "document", "content", "code"] as const) {
     const value = result[key];
     if (typeof value === "string" && value.trim()) {
@@ -70,7 +87,10 @@ function nodeBody(result: Record<string, unknown>): string | null {
       }
     }
     if (blocks.length > 0) {
-      const summary = typeof result.summary === "string" ? result.summary.trim() : "";
+      const summary =
+        typeof result.summary === "string" && result.summary.trim()
+          ? shortDescription(result.summary)
+          : "";
       return summary ? `${summary}\n\n${blocks.join("\n\n")}` : blocks.join("\n\n");
     }
   }
@@ -90,13 +110,16 @@ function nodeBody(result: Record<string, unknown>): string | null {
       }
     }
     if (blocks.length > 0) {
-      const summary = typeof result.summary === "string" ? result.summary.trim() : "";
+      const summary =
+        typeof result.summary === "string" && result.summary.trim()
+          ? shortDescription(result.summary)
+          : "";
       return summary ? `${summary}\n\n${blocks.join("\n\n")}` : blocks.join("\n\n");
     }
   }
 
   if (typeof result.summary === "string" && result.summary.trim()) {
-    return result.summary;
+    return asFile ? shortDescription(result.summary) : result.summary;
   }
   return null;
 }
@@ -110,93 +133,69 @@ function TurnView({
   active: boolean;
   busy: boolean;
 }) {
-  const answer = resultText(turn);
+  const asFile = requestWantsFile(turn.request);
+  const answer = resultText(turn, asFile);
   const live =
     turn.status === "running" ||
     turn.status === "pending" ||
     turn.status === "awaiting_approval";
 
-  return (
-    <>
-      <article className="chat-bubble user">
-        <div className="chat-role">You</div>
-        <div className="chat-body">{turn.request}</div>
-        <div className="meta">{formatWhen(turn.created_at)}</div>
-      </article>
+  const files = asFile
+    ? extractDeliverableFiles(
+        turn.final_result,
+        ...turn.nodes.map((node) => node.result),
+      )
+    : [];
+  const showResult =
+    turn.status === "completed" && (Boolean(answer) || (asFile && files.length > 0));
+  const failedMessage =
+    turn.status === "failed"
+      ? turn.error ||
+        turn.nodes.map((node) => node.executions.at(-1)?.error_message).find(Boolean) ||
+        null
+      : null;
 
-      {turn.nodes.map((node) => {
-        const last = node.executions.at(-1);
-        const nodeAnswer = nodeBody(node.result);
-        return (
-          <article className="chat-bubble agent" key={node.key}>
-            <div className="chat-role">
-              {node.agent_name || shortAgentName(node.agent_id ?? node.key)}
-              <span className={`pill ${node.status === "completed" ? "ok" : node.status === "failed" ? "err" : "warn"}`}>
-                {node.status.replaceAll("_", " ")}
-              </span>
-            </div>
-            <div className="chat-body">
-              {node.status === "failed" && (node.executions.at(-1)?.error_message || turn.error) && (
-                <p className="banner-err" style={{ marginBottom: 8 }}>
-                  {last?.error_message || turn.error}
-                </p>
-              )}
-              {nodeAnswer ||
-                (node.status === "running" || node.status === "ready"
-                  ? "Working…"
-                  : node.status === "waiting"
-                    ? "Waiting…"
-                    : node.objective.slice(0, 160) + (node.objective.length > 160 ? "…" : ""))}
-            </div>
-            {last?.model && (
-              <div className="meta model-meta">
-                {providerIdFromModel(last.model) && (
-                  <ProviderIcon providerId={providerIdFromModel(last.model)!} size={14} />
-                )}
-                {last.model}
-                {last.latency_ms ? ` · ${Math.round(last.latency_ms)} ms` : ""}
-              </div>
-            )}
-          </article>
-        );
-      })}
+  return (
+    <section className="chat-turn">
+      <article className="chat-bubble user">
+        <div className="chat-body">{turn.request}</div>
+      </article>
 
       {active && (live || busy) && (
         <article className="chat-bubble agent thinking">
-          <div className="chat-role">{BRAND_NAME}</div>
           <div className="chat-body">
-            <span className="status-dot info" aria-hidden /> Agents are working…
+            <span className="status-dot info" aria-hidden /> Working…
           </div>
         </article>
       )}
 
-      {turn.status === "completed" && answer && (
+      {showResult && (
         <article className="chat-bubble agent result">
-          <div className="chat-role">Result</div>
-          <pre className="chat-body answer">{answer}</pre>
-          {Array.isArray(turn.final_result.contributors) &&
-            turn.final_result.contributors.length > 0 && (
-              <div className="meta" data-testid="chat-contributors">
-                Contributors:{" "}
-                {(turn.final_result.contributors as Array<Record<string, unknown>>)
-                  .map((item) => String(item.agent_id ?? "agent"))
-                  .join(", ")}
-              </div>
-            )}
-          <div className="meta">
-            Cost ${turn.total_cost_usd.toFixed(4)}
-            {turn.final_result.partial ? " · partial result" : ""}
+          {asFile ? (
+            files.length > 0 ? (
+              <FileDeliverables
+                files={files}
+                description={answer ?? fileReplySummary(turn.final_result, files)}
+              />
+            ) : answer ? (
+              <div className="chat-body">{answer}</div>
+            ) : null
+          ) : (
+            <ChatMarkdown content={answer ?? ""} />
+          )}
+          <div className="chat-turn-meta">
+            <span>{formatWhen(turn.created_at)}</span>
+            {turn.total_cost_usd > 0 && <span>${turn.total_cost_usd.toFixed(4)}</span>}
           </div>
         </article>
       )}
 
-      {turn.status === "failed" && turn.error && turn.nodes.length === 0 && (
+      {failedMessage && (
         <article className="chat-bubble agent">
-          <div className="chat-role">{BRAND_NAME}</div>
-          <p className="banner-err">{turn.error}</p>
+          <p className="banner-err">{failedMessage}</p>
         </article>
       )}
-    </>
+    </section>
   );
 }
 
@@ -231,8 +230,6 @@ export function ChatThread({
     );
   }
 
-  // Prior turns first, then the active one. Each turn keeps its own request and result,
-  // so a follow-up reads as a continuation rather than a fresh thread.
   const turns = [...history, ...(workflow ? [workflow] : [])];
   const activeId = workflow?.id ?? null;
 
