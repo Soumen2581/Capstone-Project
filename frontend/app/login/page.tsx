@@ -7,7 +7,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { AmbientBackground } from "@/components/visuals/backgrounds/AmbientBackground";
 import { BlurText } from "@/components/visuals/text/BlurText";
-import { getOperatorId, loginWithGoogle, setOperatorId } from "@/lib/api";
+import { getOperatorId, loginWithGoogle, setOperatorId, setSessionToken } from "@/lib/api";
 import { BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
 
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "";
@@ -38,7 +38,10 @@ export default function LoginPage() {
           setBusy(true);
           setError(null);
           void loginWithGoogle(response.credential)
-            .then(() => router.push("/office"))
+            .then((user) => {
+              setOperatorId(user.id);
+              router.push("/office");
+            })
             .catch((cause) => {
               setError(cause instanceof Error ? cause.message : "Google sign-in failed");
             })
@@ -47,8 +50,9 @@ export default function LoginPage() {
       });
       parent.innerHTML = "";
       window.google?.accounts.id.renderButton(parent, {
-        theme: "outline",
+        theme: "filled_black",
         size: "large",
+        width: 320,
       });
     };
     document.head.appendChild(script);
@@ -57,6 +61,8 @@ export default function LoginPage() {
   const continueAsOperator = (event: FormEvent) => {
     event.preventDefault();
     const value = operator.trim() || "operator";
+    // Local demo identity uses X-Operator-Id — clear any leftover Google session.
+    setSessionToken(null);
     setOperatorId(value);
     router.push("/office");
   };
@@ -72,20 +78,26 @@ export default function LoginPage() {
         </p>
 
         {GOOGLE_CLIENT_ID ? (
-          <>
-            <div ref={buttonRef} data-testid="google-signin" />
-            <p className="meta">
-              Google sign-in uses a verified ID token. Configure AUTH_MODE=google on the API.
+          <div className="login-google">
+            <p className="meta" style={{ marginBottom: 12 }}>
+              Sign in with Google to get a verified workspace session.
             </p>
-          </>
+            <div ref={buttonRef} data-testid="google-signin" />
+            {busy && <p className="meta">Signing in…</p>}
+          </div>
         ) : (
           <p className="meta" data-testid="login-google-hint">
-            Google client id is not configured. Use local demo identity below, or set
-            NEXT_PUBLIC_GOOGLE_CLIENT_ID.
+            Google sign-in is optional. For now, continue with a local operator id below.
+            To enable Google later, set <code>NEXT_PUBLIC_GOOGLE_CLIENT_ID</code> and{" "}
+            <code>GOOGLE_CLIENT_ID</code>, then <code>AUTH_MODE=google</code>.
           </p>
         )}
 
-        <form onSubmit={continueAsOperator} className="stack-gap" style={{ marginTop: 16 }}>
+        <div className="login-divider" aria-hidden>
+          <span>or</span>
+        </div>
+
+        <form onSubmit={continueAsOperator} className="stack-gap">
           <label className="field">
             <span>Local operator id</span>
             <input
@@ -94,8 +106,12 @@ export default function LoginPage() {
               disabled={busy}
               onChange={(event) => setOperator(event.target.value)}
               placeholder="operator"
+              autoComplete="username"
             />
           </label>
+          <p className="meta" style={{ margin: 0 }}>
+            Used as your workspace identity in demo mode. Any short name works.
+          </p>
           {error && (
             <p className="banner-err" role="alert">
               {error}

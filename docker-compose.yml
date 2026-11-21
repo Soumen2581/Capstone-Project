@@ -82,6 +82,9 @@ services:
       # host-published port.
       BACKEND_INTERNAL_URL: http://backend:8000
       NEXT_PUBLIC_API_BASE_URL: http://localhost:${BACKEND_PORT:-8000}
+      # Same OAuth Web client ID as backend GOOGLE_CLIENT_ID (not a secret).
+      # Required for the Google button on /login; leave empty for local operator login.
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-}
       WATCHPACK_POLLING: "true"
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
