@@ -5,15 +5,15 @@ import { motion, useReducedMotion } from "framer-motion";
 
 import { COMM_EDGES, OFFICE_AGENTS, type OfficeAgentId } from "@/lib/design/agents";
 
-/* Keep nodes above the reserved message strip so labels never overlap the ticker. */
+/* Coordinates are % of the square stage above the message strip. */
 const POSITIONS: Record<OfficeAgentId, { x: number; y: number }> = {
-  researcher: { x: 50, y: 10 },
-  planner: { x: 18, y: 32 },
-  builder: { x: 50, y: 42 },
-  analyst: { x: 82, y: 32 },
-  reviewer: { x: 32, y: 62 },
-  strategist: { x: 68, y: 62 },
-  synthesizer: { x: 50, y: 76 },
+  researcher: { x: 50, y: 12 },
+  planner: { x: 18, y: 34 },
+  builder: { x: 50, y: 44 },
+  analyst: { x: 82, y: 34 },
+  reviewer: { x: 32, y: 66 },
+  strategist: { x: 68, y: 66 },
+  synthesizer: { x: 50, y: 86 },
 };
 
 type Props = {
@@ -48,67 +48,96 @@ export function AgentNetwork({ interactive = true, dark = false, className = "" 
 
   return (
     <div className={`agent-network ${dark ? "dark" : ""} ${className}`.trim()}>
-      <svg
-        className="agent-network-svg"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-        role="img"
-        aria-label="Agent collaboration network"
-      >
-        {COMM_EDGES.map((e) => {
-          const a = POSITIONS[e.from];
-          const b = POSITIONS[e.to];
-          const lit = edge.from === e.from && edge.to === e.to;
-          return (
-            <line
-              key={`${e.from}-${e.to}`}
-              x1={a.x}
-              y1={a.y}
-              x2={b.x}
-              y2={b.y}
-              className={`net-edge ${lit ? "lit" : ""}`}
+      <div className="agent-network-stage">
+        <svg
+          className="agent-network-svg"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="xMidYMid meet"
+          role="img"
+          aria-label="Agent collaboration network"
+        >
+          {COMM_EDGES.map((e) => {
+            const a = POSITIONS[e.from];
+            const b = POSITIONS[e.to];
+            const lit = edge.from === e.from && edge.to === e.to;
+            return (
+              <line
+                key={`${e.from}-${e.to}`}
+                x1={a.x}
+                y1={a.y}
+                x2={b.x}
+                y2={b.y}
+                className={`net-edge ${lit ? "lit" : ""}`}
+              />
+            );
+          })}
+          {!reduce && (
+            <motion.circle
+              key={pulse}
+              r={0.9}
+              className="net-packet"
+              initial={{
+                cx: POSITIONS[edge.from].x,
+                cy: POSITIONS[edge.from].y,
+                opacity: 0,
+              }}
+              animate={{
+                cx: POSITIONS[edge.to].x,
+                cy: POSITIONS[edge.to].y,
+                opacity: [0, 1, 1, 0],
+              }}
+              transition={{ duration: 1.6, ease: "easeInOut" }}
             />
+          )}
+        </svg>
+
+        {OFFICE_AGENTS.map((agent) => {
+          const pos = POSITIONS[agent.id];
+          const isActive = agent.id === active;
+          return (
+            <button
+              key={agent.id}
+              type="button"
+              className={`net-node ${isActive ? "on" : ""}`}
+              style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+              onClick={() => interactive && setSelected(agent.id)}
+              disabled={!interactive}
+              aria-pressed={selected === agent.id}
+            >
+              <span className="net-node-dot" aria-hidden />
+              <span className="net-node-name">{agent.name}</span>
+              {isActive && <span className="net-node-status">Active</span>}
+            </button>
           );
         })}
-        {!reduce && (
-          <motion.circle
-            key={pulse}
-            r={0.9}
-            className="net-packet"
-            initial={{
-              cx: POSITIONS[edge.from].x,
-              cy: POSITIONS[edge.from].y,
-              opacity: 0,
-            }}
-            animate={{
-              cx: POSITIONS[edge.to].x,
-              cy: POSITIONS[edge.to].y,
-              opacity: [0, 1, 1, 0],
-            }}
-            transition={{ duration: 1.6, ease: "easeInOut" }}
-          />
-        )}
-      </svg>
 
-      {OFFICE_AGENTS.map((agent) => {
-        const pos = POSITIONS[agent.id];
-        const isActive = agent.id === active;
-        return (
-          <button
-            key={agent.id}
-            type="button"
-            className={`net-node ${isActive ? "on" : ""}`}
-            style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
-            onClick={() => interactive && setSelected(agent.id)}
-            disabled={!interactive}
-            aria-pressed={selected === agent.id}
-          >
-            <span className="net-node-dot" aria-hidden />
-            <span className="net-node-name">{agent.name}</span>
-            {isActive && <span className="net-node-status">Active</span>}
-          </button>
-        );
-      })}
+        {selectedAgent && (
+          <aside className="net-detail" aria-label={`${selectedAgent.name} details`}>
+            <header>
+              <h3>{selectedAgent.name}</h3>
+              <button type="button" className="mkt-linkish" onClick={() => setSelected(null)}>
+                Close
+              </button>
+            </header>
+            <p className="muted">{selectedAgent.role}</p>
+            <p>{selectedAgent.blurb}</p>
+            <dl className="net-detail-meta">
+              <div>
+                <dt>Status</dt>
+                <dd>{selectedAgent.id === active ? "Active" : "Ready"}</dd>
+              </div>
+              <div>
+                <dt>Model</dt>
+                <dd>Auto</dd>
+              </div>
+              <div>
+                <dt>Current task</dt>
+                <dd>{selectedAgent.id === active ? edge.sample : "Waiting for handoff"}</dd>
+              </div>
+            </dl>
+          </aside>
+        )}
+      </div>
 
       <p className="net-message" aria-live="polite">
         <strong>{OFFICE_AGENTS.find((a) => a.id === edge.from)?.name}</strong>
@@ -116,33 +145,6 @@ export function AgentNetwork({ interactive = true, dark = false, className = "" 
         <strong>{OFFICE_AGENTS.find((a) => a.id === edge.to)?.name}</strong>
         <span>{edge.sample}</span>
       </p>
-
-      {selectedAgent && (
-        <aside className="net-detail" aria-label={`${selectedAgent.name} details`}>
-          <header>
-            <h3>{selectedAgent.name}</h3>
-            <button type="button" className="mkt-linkish" onClick={() => setSelected(null)}>
-              Close
-            </button>
-          </header>
-          <p className="muted">{selectedAgent.role}</p>
-          <p>{selectedAgent.blurb}</p>
-          <dl className="net-detail-meta">
-            <div>
-              <dt>Status</dt>
-              <dd>{selectedAgent.id === active ? "Active" : "Ready"}</dd>
-            </div>
-            <div>
-              <dt>Model</dt>
-              <dd>Auto</dd>
-            </div>
-            <div>
-              <dt>Current task</dt>
-              <dd>{selectedAgent.id === active ? edge.sample : "Waiting for handoff"}</dd>
-            </div>
-          </dl>
-        </aside>
-      )}
     </div>
   );
 }
