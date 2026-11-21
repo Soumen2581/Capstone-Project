@@ -9,6 +9,36 @@ Submit one brief. Agent Mesh selects the right specialists, builds a workflow, r
 **Pending uploads:** [`MISSING_SUBMISSION_FILES.md`](MISSING_SUBMISSION_FILES.md)  
 **Audit checklist (Sprint 0–2):** [`docs/AUDIT_CHECKLIST_SPRINT0-2.md`](docs/AUDIT_CHECKLIST_SPRINT0-2.md)
 
+## Screenshots
+
+<p align="center">
+  <img src="docs/images/01-hero.png" alt="Agent Mesh product site hero" width="900" />
+</p>
+
+<p align="center">
+  <img src="docs/images/02-agents-roster.png" alt="Specialist agent roster" width="900" />
+</p>
+
+<p align="center">
+  <img src="docs/images/04-agent-mesh.png" alt="Agents collaborating over the mesh" width="900" />
+</p>
+
+<p align="center">
+  <img src="docs/images/05-one-workspace.png" alt="Workspace product tour" width="900" />
+</p>
+
+<p align="center">
+  <img src="docs/images/06-office-home.png" alt="Command workspace" width="900" />
+</p>
+
+<p align="center">
+  <img src="docs/images/07-settings-providers.png" alt="Settings and AI providers" width="900" />
+</p>
+
+<p align="center">
+  <img src="docs/images/08-login.png" alt="Sign in" width="900" />
+</p>
+
 ## Quick start (Docker)
 
 ```bash

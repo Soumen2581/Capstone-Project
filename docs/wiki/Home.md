@@ -104,6 +104,34 @@ Improved **consistency**, **scalability**, and reduced **wasted spend** through 
 
 ---
 
+## Screenshots
+
+<p align="center">
+  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/01-hero.png" alt="Product site hero" width="900" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/04-agent-mesh.png" alt="Agent collaboration mesh" width="900" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/06-office-home.png" alt="Command workspace" width="900" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/10-office-build.png" alt="Workflow builder" width="900" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/07-settings-providers.png" alt="Settings and providers" width="900" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/08-login.png" alt="Sign in" width="900" />
+</p>
+
+More captures: [`docs/images/`](https://github.com/Soumen2581/Capstone-Project/tree/master/docs/images)
+
 ## Project Design
 
 ### High-level architecture
