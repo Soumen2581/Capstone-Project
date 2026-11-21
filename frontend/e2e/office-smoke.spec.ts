@@ -1,4 +1,9 @@
 import { expect, test } from "@playwright/test";
+import { grantWorkspaceAccess } from "./auth";
+
+test.beforeEach(async ({ page }) => {
+  await grantWorkspaceAccess(page);
+});
 
 test.describe("Agent Mesh smoke (J-2)", () => {
   test("office loads with brand and API badge", async ({ page }) => {

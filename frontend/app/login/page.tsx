@@ -7,7 +7,13 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { AmbientBackground } from "@/components/visuals/backgrounds/AmbientBackground";
 import { BlurText } from "@/components/visuals/text/BlurText";
-import { getOperatorId, loginWithGoogle, setOperatorId, setSessionToken } from "@/lib/api";
+import {
+  getOperatorId,
+  loginWithGoogle,
+  markWorkspaceAuthed,
+  setOperatorId,
+  setSessionToken,
+} from "@/lib/api";
 import { BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
 
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "";
@@ -40,6 +46,7 @@ export default function LoginPage() {
           void loginWithGoogle(response.credential)
             .then((user) => {
               setOperatorId(user.id);
+              markWorkspaceAuthed();
               router.push("/office");
             })
             .catch((cause) => {
@@ -64,6 +71,7 @@ export default function LoginPage() {
     // Local demo identity uses X-Operator-Id — clear any leftover Google session.
     setSessionToken(null);
     setOperatorId(value);
+    markWorkspaceAuthed();
     router.push("/office");
   };
 
@@ -123,9 +131,7 @@ export default function LoginPage() {
         </form>
 
         <p className="meta" style={{ marginTop: 16 }}>
-          <Link href="/office">Skip to office</Link>
-          {" · "}
-          <Link href="/">Product site</Link>
+          <Link href="/">Back to product site</Link>
         </p>
       </section>
     </main>

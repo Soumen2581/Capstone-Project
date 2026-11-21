@@ -9,6 +9,7 @@ import { AppShell, type NavTab } from "@/components/AppShell";
 import { ChatThread } from "@/components/ChatThread";
 import { ConversationSidebar } from "@/components/ConversationSidebar";
 import { MessagesPanel } from "@/components/MessagesPanel";
+import { OfficeAuthGate } from "@/components/OfficeAuthGate";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { TaskComposer } from "@/components/TaskComposer";
 import { WorkflowBuilder } from "@/components/WorkflowBuilder";
@@ -67,7 +68,15 @@ import { TERMINAL_STATUSES } from "@/lib/types";
 
 type MailFolder = "inbox" | "sent" | "archive";
 
-export default function HomePage() {
+export default function OfficePage() {
+  return (
+    <OfficeAuthGate>
+      <OfficeWorkspace />
+    </OfficeAuthGate>
+  );
+}
+
+function OfficeWorkspace() {
   const [tab, setTab] = useState<NavTab>("home");
   const [office, setOffice] = useState<OfficeSnapshot | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
