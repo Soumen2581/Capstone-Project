@@ -44,7 +44,7 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.16 }}
           >
-            <Link href="/office" className="mkt-btn mkt-btn-primary mkt-btn-lg">
+            <Link href="/login" className="mkt-btn mkt-btn-primary mkt-btn-lg">
               Open workspace
             </Link>
             <a href="#how-it-works" className="mkt-text-link">

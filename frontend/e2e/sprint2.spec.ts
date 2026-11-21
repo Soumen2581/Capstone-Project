@@ -1,8 +1,13 @@
 import { expect, test } from "@playwright/test";
+import { grantWorkspaceAccess } from "./auth";
 
 /**
  * Sprint 2 UI coverage for Build tab, DAG surface, and login page.
  */
+test.beforeEach(async ({ page }) => {
+  await grantWorkspaceAccess(page);
+});
+
 test.describe("Sprint 2 office surfaces", () => {
   test("Build tab shows the workflow builder palette", async ({ page }) => {
     await page.goto("/office");

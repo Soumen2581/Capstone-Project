@@ -29,7 +29,7 @@ export default function MarketingPage() {
       </main>
       <MarketingFooter />
       <div className="mkt-skip-office">
-        <Link href="/office">Skip to workspace</Link>
+        <Link href="/login">Skip to workspace</Link>
       </div>
     </div>
   );

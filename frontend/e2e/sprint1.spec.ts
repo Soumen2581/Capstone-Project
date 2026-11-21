@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { grantWorkspaceAccess } from "./auth";
 
 /**
  * Sprint 1 UI test cases TC_20-TC_23 from the user stories document.
@@ -7,6 +8,10 @@ import { expect, test } from "@playwright/test";
 const API_BASE = process.env.E2E_API_BASE_URL ?? "http://localhost:8000";
 
 type ApiAgent = { id: string; status: string; capabilities: string[] };
+
+test.beforeEach(async ({ page }) => {
+  await grantWorkspaceAccess(page);
+});
 
 test.describe("Sprint 1 workspace", () => {
   test("TC_20 submit a brief from the UI shows spawned agents with status and reason", async ({

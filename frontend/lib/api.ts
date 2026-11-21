@@ -23,6 +23,8 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000"
 
 const OPERATOR_STORAGE_KEY = "agentorch.operatorId";
 const SESSION_STORAGE_KEY = "agent-mesh-session";
+/** Set when the user completes /login (Google or local operator). */
+const WORKSPACE_AUTH_KEY = "agent-mesh-workspace-auth";
 
 export function getSessionToken(): string | null {
   if (typeof window === "undefined") {
@@ -55,6 +57,32 @@ export function setOperatorId(value: string): void {
     return;
   }
   window.localStorage.setItem(OPERATOR_STORAGE_KEY, value.trim().slice(0, 64) || "operator");
+}
+
+/** True after a successful pass through /login. */
+export function isWorkspaceAuthed(): boolean {
+  if (typeof window === "undefined") {
+    return false;
+  }
+  if (getSessionToken()) {
+    return true;
+  }
+  return window.localStorage.getItem(WORKSPACE_AUTH_KEY) === "1";
+}
+
+export function markWorkspaceAuthed(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+  window.localStorage.setItem(WORKSPACE_AUTH_KEY, "1");
+}
+
+export function clearWorkspaceAuth(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+  window.localStorage.removeItem(WORKSPACE_AUTH_KEY);
+  setSessionToken(null);
 }
 
 export class ApiError extends Error {
@@ -140,7 +168,7 @@ export async function logoutSession(): Promise<void> {
   try {
     await request<void>("/api/v1/auth/logout", { method: "POST" });
   } finally {
-    setSessionToken(null);
+    clearWorkspaceAuth();
   }
 }
 

@@ -37,7 +37,7 @@ export function MarketingNav() {
         </nav>
         <div className="mkt-nav-actions">
           <ThemeToggle compact className="mkt-theme-toggle" />
-          <Link href="/office" className="mkt-btn mkt-btn-primary">
+          <Link href="/login" className="mkt-btn mkt-btn-primary">
             Open workspace
           </Link>
           <button
@@ -59,7 +59,7 @@ export function MarketingNav() {
             </a>
           ))}
           <ThemeToggle />
-          <Link href="/office" className="mkt-btn mkt-btn-primary" onClick={() => setOpen(false)}>
+          <Link href="/login" className="mkt-btn mkt-btn-primary" onClick={() => setOpen(false)}>
             Open workspace
           </Link>
         </div>

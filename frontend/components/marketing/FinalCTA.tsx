@@ -17,7 +17,7 @@ export function FinalCTA() {
           <p className="mkt-kicker">08 · Begin</p>
           <h2 className="mkt-title">Give your AI team a task.</h2>
           <p className="mkt-body">Open the office, describe the brief, and watch specialists collaborate.</p>
-          <Link href="/office" className="mkt-btn mkt-btn-primary mkt-btn-lg">
+          <Link href="/login" className="mkt-btn mkt-btn-primary mkt-btn-lg">
             Start a task
           </Link>
         </motion.div>
@@ -37,7 +37,7 @@ export function MarketingFooter() {
         <nav aria-label="Footer">
           <a href="#agents">Agents</a>
           <a href="#how-it-works">How it works</a>
-          <Link href="/office">Workspace</Link>
+          <Link href="/login">Workspace</Link>
         </nav>
       </div>
     </footer>
