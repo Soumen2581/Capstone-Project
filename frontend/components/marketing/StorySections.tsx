@@ -1,21 +1,13 @@
 "use client";
 
-import type { ReactNode } from "react";
-
-import FadeContent from "@/components/react-bits/FadeContent";
 import { OFFICE_AGENTS } from "@/lib/design/agents";
-
-function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
-  return (
-    <FadeContent trigger="scroll" effect="fade" blur={false} duration={0.7} delay={delay} threshold={0.15}>
-      {children}
-    </FadeContent>
-  );
-}
+import { SectionAmbient } from "@/components/marketing/SectionAmbient";
+import { SectionReveal as Reveal } from "@/components/marketing/SectionReveal";
 
 export function IdeaSection() {
   return (
     <section className="mkt-section" id="idea">
+      <SectionAmbient variant="dots" />
       <div className="mkt-grid mkt-section-narrow">
         <Reveal>
           <p className="mkt-kicker">01 · The idea</p>
@@ -38,6 +30,7 @@ export function IdeaSection() {
 export function AgentsSection() {
   return (
     <section className="mkt-section mkt-section-muted" id="agents">
+      <SectionAmbient variant="veil" />
       <div className="mkt-grid">
         <Reveal>
           <p className="mkt-kicker">02 · The agents</p>

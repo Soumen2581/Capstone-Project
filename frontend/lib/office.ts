@@ -3,7 +3,7 @@
  * Live (non-demo) models only; prefers $0 output, else cheapest.
  */
 
-import type { ModelView, ProviderStatus } from "./types";
+import type { ModelView, ProviderStatus, WorkflowView } from "./types";
 
 const FREE_ONLY_KEY = "agentorch.freeOnly";
 
@@ -94,6 +94,19 @@ export function formatWhen(iso: string): string {
   } catch {
     return iso;
   }
+}
+
+/**
+ * One sidebar entry per conversation: keep the latest turn of each thread and
+ * hide earlier turns that are parents of another listed workflow.
+ */
+export function conversationTips(workflows: WorkflowView[]): WorkflowView[] {
+  const parentIds = new Set(
+    workflows
+      .map((item) => item.parent_workflow_id)
+      .filter((id): id is string => Boolean(id)),
+  );
+  return workflows.filter((item) => !parentIds.has(item.id));
 }
 
 export type AiModeChip = "free" | "offline" | "configure";
