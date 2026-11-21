@@ -9,7 +9,7 @@ Professor repo (`htmw/F2026-T2-Phoenix`) is **read-only** — not modified.
 | Story | Status | Notes |
 |-------|--------|-------|
 | TC_49 Input schemas | **Done in this branch** | All 10 built-ins declare meaningful `input_schema`; executor validates; schema API returns both contracts. |
-| US_09 Model routing | **Extended** | Existing adapters (OpenAI-compatible incl. Gemini, Anthropic, Fake) + trait router + fallback. Now persists `routing_reason`, alternatives, and fallback origin on each execution. Fallback timing asserted &lt; 5s in unit test. |
+| US_09 Model routing | **Extended** | Existing adapters (OpenAI-compatible incl. Gemini, Anthropic, Fake) + trait router + fallback. Persists `routing_reason`, alternatives, and fallback origin. When another model remains, hung primaries hand off within `FALLBACK_HANDOFF_SECONDS` (5s); covered by unit tests. |
 | US_10 Cost transparency | **Extended** | Existing per-attempt tokens/cost/latency. Work tab now shows a cost summary table with totals and fallback rows. |
 | US_11 Result synthesis | **Extended** | Existing `synthesise()` + chat thread. UI now surfaces contributor attribution and cost on the result bubble. |
 

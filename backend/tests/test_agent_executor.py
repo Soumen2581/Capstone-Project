@@ -492,3 +492,62 @@ async def test_provider_unavailability_falls_back_to_the_next_model() -> None:
     assert output.provider == "fake"
     assert output.fallback_from_provider == "down"
     assert elapsed < 5.0, f"fallback took {elapsed:.3f}s; acceptance is within 5s"
+
+
+async def test_hung_primary_hands_off_to_fallback_within_five_seconds() -> None:
+    """US_09: a hanging primary must yield to the next model within the handoff window."""
+    from collections.abc import AsyncIterator
+
+    from app.providers.base import LLMProvider, ModelSpec, ProviderError
+    from app.providers.registry import ProviderRegistry
+    from app.services.agent_executor import FALLBACK_HANDOFF_SECONDS
+
+    hung = ModelSpec(
+        id="hung:slow",
+        provider="hung",
+        model_name="hung-slow",
+        traits=frozenset({ModelTrait.STRUCTURED_OUTPUT, ModelTrait.FAST, ModelTrait.CHEAP}),
+        context_tokens=32_000,
+        max_output_tokens=1_024,
+        input_cost_per_million=0.01,
+        output_cost_per_million=0.01,
+        typical_latency_ms=100,
+    )
+
+    class HungProvider(LLMProvider):
+        name = "hung"
+
+        def get_model_capabilities(self) -> tuple[ModelSpec, ...]:
+            return (hung,)
+
+        def estimate_cost(self, _request: CompletionRequest) -> float:
+            return 0.001
+
+        def validate_configuration(self) -> None:
+            return None
+
+        async def stream(self, _request: CompletionRequest) -> AsyncIterator[str]:
+            for _ in ():
+                yield ""
+
+        async def generate(self, _request: CompletionRequest) -> CompletionResponse:
+            await asyncio.sleep(FALLBACK_HANDOFF_SECONDS + 5)
+            raise ProviderError(ErrorKind.TIMEOUT, "still hanging", provider=self.name)
+
+    backup = FakeProvider()
+    backup.queue_json({"answer": "rescued"})
+    agent = simple_agent(limits=AgentLimits(timeout_seconds=60.0, max_cost_usd=1.0))
+
+    started = time.perf_counter()
+    output = await AgentExecutor(ProviderRegistry([HungProvider(), backup])).execute(
+        agent, input_for(agent)
+    )
+    elapsed = time.perf_counter() - started
+
+    assert output.status is ExecutionStatus.SUCCEEDED
+    assert output.payload == {"answer": "rescued"}
+    assert output.provider == "fake"
+    assert output.fallback_from_provider == "hung"
+    assert elapsed < FALLBACK_HANDOFF_SECONDS + 1.0, (
+        f"handoff took {elapsed:.3f}s; expected within ~{FALLBACK_HANDOFF_SECONDS}s"
+    )

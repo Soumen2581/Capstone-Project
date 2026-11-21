@@ -34,6 +34,10 @@ from app.services.prompting import build_system_prompt, build_user_prompt
 
 logger = get_logger(__name__)
 
+# US_09: when another ranked model remains, abandon a hung/slow primary within this
+# window so fallback can start. The final candidate keeps the agent's full timeout.
+FALLBACK_HANDOFF_SECONDS = 5.0
+
 
 @dataclass(frozen=True, slots=True)
 class ExecutionContext:
@@ -106,6 +110,9 @@ class AgentExecutor:
             provider, model = decision.provider, decision.model
             if provider.name in skipped_providers:
                 continue
+            has_fallback = any(
+                item.provider.name not in skipped_providers for item in ranked[index + 1 :]
+            )
             output = await self._attempt(
                 agent,
                 agent_input,
@@ -116,6 +123,7 @@ class AgentExecutor:
                 started_at,
                 started,
                 log,
+                handoff_timeout_seconds=FALLBACK_HANDOFF_SECONDS if has_fallback else None,
             )
             alternatives = tuple(
                 f"{item.provider.name}:{item.model.id}"
@@ -182,6 +190,8 @@ class AgentExecutor:
         started_at: datetime,
         started: float,
         log: Any,
+        *,
+        handoff_timeout_seconds: float | None = None,
     ) -> AgentOutput:
         request = self._build_request(agent, agent_input, model)
 
@@ -196,27 +206,32 @@ class AgentExecutor:
             )
             return self._failure(agent, agent_input, budget_error, started_at, started)
 
+        call_timeout = agent.limits.timeout_seconds
+        if handoff_timeout_seconds is not None:
+            call_timeout = min(call_timeout, handoff_timeout_seconds)
+
         log.info(
             "agent_execution_started",
             provider=provider.name,
             model=model.id,
             routing_reason=reason,
             estimated_cost_usd=round(estimate, 6),
+            call_timeout_seconds=call_timeout,
+            fallback_handoff=handoff_timeout_seconds is not None,
         )
 
         try:
-            response = await asyncio.wait_for(
-                provider.generate(request), timeout=agent.limits.timeout_seconds
-            )
+            response = await asyncio.wait_for(provider.generate(request), timeout=call_timeout)
         except TimeoutError:
-            log.warning("agent_execution_timed_out", timeout_seconds=agent.limits.timeout_seconds)
+            log.warning("agent_execution_timed_out", timeout_seconds=call_timeout)
             return self._failure(
                 agent,
                 agent_input,
                 ExecutionError(
                     kind=ErrorKind.TIMEOUT,
-                    message=f"agent exceeded {agent.limits.timeout_seconds}s",
+                    message=f"agent exceeded {call_timeout}s",
                     provider=provider.name,
+                    retryable=True,
                 ),
                 started_at,
                 started,
