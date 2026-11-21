@@ -75,10 +75,11 @@ export function TaskComposer({
     <section className={`panel composer-hero ${compact ? "composer-compact" : ""}`}>
       {!compact && (
         <>
-          <h2>What should the office take on?</h2>
+          <h2>New request</h2>
           <p className="muted" style={{ margin: 0 }}>
-            One brief in, specialists plan across Claude, Kimi, ChatGPT, Gemini, Grok, and more
-            {offlineDemo ? " (offline demo)." : "."}
+            Describe the outcome you need. Agent Mesh selects specialists, routes models, and
+            returns one synthesized result
+            {offlineDemo ? " (demo mode)." : "."}
           </p>
         </>
       )}

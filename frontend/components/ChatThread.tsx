@@ -220,11 +220,11 @@ export function ChatThread({
           ) : (
             <BrandLogo size={64} variant="mark" className="empty-brand-logo" />
           )}
-          <h3>{busy ? "Starting…" : "Start a conversation"}</h3>
+          <h3>{busy ? "Starting…" : "Ready for a request"}</h3>
           <p>
             {busy
-              ? "Assigning specialists and opening the thread."
-              : `Describe a task below. ${BRAND_NAME} specialists plan, collaborate across models, and stream the answer here.`}
+              ? "Selecting specialists and opening the thread."
+              : `Enter a brief below. ${BRAND_NAME} plans the work, routes models, and streams one result here.`}
           </p>
         </div>
       </div>

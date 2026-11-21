@@ -59,10 +59,10 @@ export function AppShell({
         <div className="header-meta">
           <ThemeToggle compact />
           <Link href="/" className="px-btn ghost">
-            Overview
+            Product site
           </Link>
           <button type="button" className="px-btn primary" onClick={onNewTask}>
-            New task
+            New request
           </button>
         </div>
       </header>

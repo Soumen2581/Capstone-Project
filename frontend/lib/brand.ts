@@ -1,7 +1,7 @@
 /** Product brand — single source for name + asset paths. */
 
 export const BRAND_NAME = "Agent Mesh";
-export const BRAND_TAGLINE = "One request, many minds — orchestrated";
+export const BRAND_TAGLINE = "Specialist AI agents, coordinated for real work";
 
 /** Square icon (`frontend/public/brand/icon.png`). */
 export const BRAND_MARK_SRC = "/brand/icon.png";
