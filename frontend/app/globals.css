@@ -391,7 +391,15 @@ button:disabled {
   background-size: 180% 180%;
   -webkit-background-clip: text;
   background-clip: text;
-  color: transparent;
+  /* Keep a readable fill; clip paints over it when supported. */
+  color: var(--text);
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .composer-gradient,
+  .brand-gradient-text {
+    color: transparent;
+  }
 }
 
 .brand-gradient-text:not(.is-static) {

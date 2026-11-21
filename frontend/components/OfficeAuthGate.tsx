@@ -24,7 +24,15 @@ export function OfficeAuthGate({ children }: { children: ReactNode }) {
   if (!ready) {
     return (
       <main className="login-shell" data-testid="office-auth-gate">
-        <p className="meta">Opening workspace…</p>
+        <section className="login-card">
+          <p className="meta" style={{ margin: 0 }}>
+            Checking workspace access…
+          </p>
+          <p className="meta">
+            If this stays here, open <a href="/login">/login</a> and continue with a local
+            operator id.
+          </p>
+        </section>
       </main>
     );
   }

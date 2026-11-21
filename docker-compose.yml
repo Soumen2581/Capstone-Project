@@ -99,6 +99,7 @@ services:
       - ./frontend/lib:/app/lib
       - ./frontend/components:/app/components
       - ./frontend/public:/app/public
+      - ./frontend/next.config.ts:/app/next.config.ts:ro
     depends_on:
       backend:
         condition: service_started
