@@ -4,12 +4,16 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 
+import FadeContent from "@/components/react-bits/FadeContent";
 import { WORKFLOW_STEPS } from "@/lib/design/agents";
 import { AgentNetwork } from "@/components/marketing/AgentNetwork";
 
-function Reveal({ children }: { children: ReactNode; delay?: number }) {
-  // Always render opaque — no fade/blur that can leave copy unreadable.
-  return <div>{children}</div>;
+function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
+  return (
+    <FadeContent trigger="scroll" effect="fade" blur={false} duration={0.7} delay={delay} threshold={0.15}>
+      {children}
+    </FadeContent>
+  );
 }
 
 export function WorkflowSection() {
@@ -66,8 +70,48 @@ export function CommunicationSection() {
   );
 }
 
+const PRODUCT_FRAMES = [
+  {
+    src: "/marketing/tour-command.png",
+    label: "Command",
+    caption: "Submit a brief. Agent Mesh plans specialists and routes models.",
+  },
+  {
+    src: "/marketing/tour-build.png",
+    label: "Build",
+    caption: "Compose a workflow DAG, preview dependencies, then run.",
+  },
+  {
+    src: "/marketing/tour-work.png",
+    label: "Work",
+    caption: "Watch each agent step, costs, and hand-offs as the run progresses.",
+  },
+  {
+    src: "/marketing/tour-messages.png",
+    label: "Messages",
+    caption: "Persistent agent mail and synthesized answers stay with the task.",
+  },
+  {
+    src: "/marketing/tour-settings.png",
+    label: "Settings",
+    caption: "Connect free providers like Groq and Gemini, keep Free Only on.",
+  },
+] as const;
+
 export function WorkspaceSection() {
-  const pillars = ["Tasks", "Agents", "Messages", "Artifacts", "Memory", "Workflows"];
+  const [frame, setFrame] = useState(0);
+  const reduce = useReducedMotion();
+
+  useEffect(() => {
+    if (reduce) {
+      return;
+    }
+    const id = window.setInterval(() => setFrame((n) => (n + 1) % PRODUCT_FRAMES.length), 3200);
+    return () => window.clearInterval(id);
+  }, [reduce]);
+
+  const current = PRODUCT_FRAMES[frame]!;
+
   return (
     <section className="mkt-section" id="workspace">
       <div className="mkt-grid">
@@ -79,45 +123,31 @@ export function WorkspaceSection() {
             work, not a pile of disconnected chats.
           </p>
         </Reveal>
-        <ul className="pillar-list">
-          {pillars.map((item, i) => (
-            <Reveal key={item} delay={i * 0.04}>
-              <li>{item}</li>
-            </Reveal>
-          ))}
-        </ul>
+
         <Reveal delay={0.08}>
-          <div className="product-preview" aria-hidden>
-            <div className="product-preview-chrome">
-              <span />
-              <span />
-              <span />
-              <em>localhost · Agent Mesh</em>
+          <div className="product-tour" aria-label="Workspace product tour">
+            <div className="product-tour-tabs" role="tablist">
+              {PRODUCT_FRAMES.map((item, index) => (
+                <button
+                  key={item.label}
+                  type="button"
+                  role="tab"
+                  aria-selected={index === frame}
+                  className={index === frame ? "on" : ""}
+                  onClick={() => setFrame(index)}
+                >
+                  {item.label}
+                </button>
+              ))}
             </div>
-            <div className="product-preview-body">
-              <div className="product-preview-side">
-                <strong>Active task</strong>
-                <p>Go-to-market plan</p>
-              </div>
-              <div className="product-preview-agents">
-                <div className="pp-row on">
-                  <span>Research</span>
-                  <em>Working</em>
-                </div>
-                <div className="pp-row">
-                  <span>Analysis</span>
-                  <em>Waiting</em>
-                </div>
-                <div className="pp-row done">
-                  <span>Planning</span>
-                  <em>Complete</em>
-                </div>
-                <div className="pp-row">
-                  <span>Report</span>
-                  <em>Ready</em>
-                </div>
-              </div>
-            </div>
+            <figure className="product-tour-frame">
+              {/* eslint-disable-next-line @next/next/no-img-element -- local marketing capture */}
+              <img key={current.src} src={current.src} alt={`Agent Mesh ${current.label} workspace`} />
+              <figcaption>
+                <strong>{current.label}</strong>
+                <span>{current.caption}</span>
+              </figcaption>
+            </figure>
           </div>
         </Reveal>
       </div>

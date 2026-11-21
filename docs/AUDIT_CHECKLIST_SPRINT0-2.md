@@ -2,8 +2,8 @@
 
 **Repository under change:** https://github.com/Soumen2581/Capstone-Project (personal)  
 **Read-only reference:** https://github.com/htmw/F2026-T2-Phoenix  
-**Audit date:** 2026-11-16 (America/New_York)  
-**Scope:** Sprint 0–2 only. No Sprint 3+ implementation.
+**Audit date:** 2026-11-16 (America/New_York); docs refresh 2026-11-21  
+**Scope:** Sprint 0–2 verified MVP. Sprint 3+ deliverable links are stubbed in wiki / `MISSING_SUBMISSION_FILES.md` for later upload.
 
 ## Git / remotes
 

@@ -2,7 +2,6 @@
 
 import { FormEvent } from "react";
 
-import { BrandGradientText } from "@/components/visuals/text/BrandGradientText";
 import type { AgentSummary, RoutingStrategy } from "@/lib/types";
 
 const EXAMPLES = [
@@ -76,11 +75,9 @@ export function TaskComposer({
     <section className={`panel composer-hero ${compact ? "composer-compact" : ""}`}>
       {!compact && (
         <>
-          <h2 className="composer-title">
-            <BrandGradientText className="composer-gradient">Command</BrandGradientText>
-          </h2>
+          <h2 className="composer-title">Command</h2>
           <p className="muted" style={{ margin: 0 }}>
-            {`Describe the outcome you need. Agent Mesh selects specialists, routes models, and returns one synthesized result${offlineDemo ? " (demo mode)." : "."}`}
+            {`Describe the outcome you need. Agent Mesh selects specialists, routes models, and returns one synthesized result${offlineDemo ? " (offline simulation until a provider is connected)." : "."}`}
           </p>
         </>
       )}
@@ -101,7 +98,7 @@ export function TaskComposer({
 
       {offlineDemo && !noModels && (
         <p className="banner warn">
-          Offline demo, responses are simulated. Connect a provider in Settings for live models.
+          Offline simulation is active. Connect a provider in Settings for live models.
         </p>
       )}
 

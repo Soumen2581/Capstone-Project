@@ -18,7 +18,6 @@ import { useState, type ReactNode } from "react";
 
 import { BrandLogo } from "@/components/BrandLogo";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { AmbientBackground } from "@/components/visuals/backgrounds/AmbientBackground";
 import { BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
 
 export type NavTab = "home" | "agents" | "build" | "work" | "messages" | "settings";
@@ -28,14 +27,13 @@ const NAV: {
   label: string;
   testId: string;
   icon: typeof Sparkles;
-  ambient: "threads" | "dots" | "veil" | "static";
 }[] = [
-  { id: "home", label: "Command", testId: "tab-command", icon: Sparkles, ambient: "static" },
-  { id: "agents", label: "Agents", testId: "tab-agents", icon: Bot, ambient: "static" },
-  { id: "build", label: "Build", testId: "tab-build", icon: Hammer, ambient: "static" },
-  { id: "work", label: "Work", testId: "tab-work", icon: Workflow, ambient: "static" },
-  { id: "messages", label: "Messages", testId: "tab-activity", icon: MessageSquare, ambient: "static" },
-  { id: "settings", label: "Settings", testId: "tab-settings", icon: Settings, ambient: "static" },
+  { id: "home", label: "Command", testId: "tab-command", icon: Sparkles },
+  { id: "agents", label: "Agents", testId: "tab-agents", icon: Bot },
+  { id: "build", label: "Build", testId: "tab-build", icon: Hammer },
+  { id: "work", label: "Work", testId: "tab-work", icon: Workflow },
+  { id: "messages", label: "Messages", testId: "tab-activity", icon: MessageSquare },
+  { id: "settings", label: "Settings", testId: "tab-settings", icon: Settings },
 ];
 
 export function AppShell({
@@ -55,8 +53,6 @@ export function AppShell({
 
   return (
     <div className={`app-shell${collapsed ? " collapsed" : ""}`}>
-      <AmbientBackground variant={active.ambient} />
-
       <aside className="app-sidebar" aria-label="Workspace navigation">
         <Link href="/" className="app-sidebar-brand" aria-label={`${BRAND_NAME} marketing site`}>
           <BrandLogo size={34} variant="mark" />

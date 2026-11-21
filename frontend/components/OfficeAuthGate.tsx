@@ -29,8 +29,7 @@ export function OfficeAuthGate({ children }: { children: ReactNode }) {
             Checking workspace access…
           </p>
           <p className="meta">
-            If this stays here, open <a href="/login">/login</a> and continue with a local
-            operator id.
+            If this stays here, open <a href="/login">sign in</a> and continue to the workspace.
           </p>
         </section>
       </main>

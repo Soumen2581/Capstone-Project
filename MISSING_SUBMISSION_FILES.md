@@ -1,59 +1,39 @@
-# Missing Submission Files
-
-This tracker lists CS 691 / course deliverables that are **not invented** here and may still need a manual upload from you or the team.
+# Missing / pending submission files
 
 Personal repository: https://github.com/Soumen2581/Capstone-Project  
-Course repository (read-only reference): https://github.com/htmw/F2026-T2-Phoenix
+Course reference (read-only): https://github.com/htmw/F2026-T2-Phoenix  
 
-Legend: **COMPLETE** (in this personal repo or a verified personal release) · **PARTIAL** · **MISSING** (you will supply)
+Links below are the **canonical paths** where each artifact should land. Upload the file later; do not invent content.
 
----
+| Artifact | Status | Ready link (personal repo) |
+|----------|--------|----------------------------|
+| CS 691 technical paper (PDF) | **PENDING — owner will supply** | https://github.com/Soumen2581/Capstone-Project/blob/master/docs/paper/CS691_Technical_Paper.pdf |
+| Sprint 3 presentation video | PENDING | https://github.com/Soumen2581/Capstone-Project/releases/download/sprint-3/AgentMesh_Sprint3_Presentation.mp4 |
+| Sprint 3 presentation slides (PDF) | PENDING | https://github.com/Soumen2581/Capstone-Project/blob/master/docs/sprints/AgentMesh_Sprint3_Presentation.pdf |
+| Sprint 3 presentation slides (PPTX) | PENDING | https://github.com/Soumen2581/Capstone-Project/blob/master/docs/sprints/AgentMesh_Sprint3_Presentation.pptx |
+| Sprint 3 live demo video | PENDING | https://github.com/Soumen2581/Capstone-Project/raw/master/docs/sprints/AgentMesh_Sprint3_Demo.mp4 |
+| Sprint 3 planning video | PENDING | https://github.com/Soumen2581/Capstone-Project/releases/download/sprint-3/AgentMesh_Sprint3_Planning.mp4 |
+| Sprint 3 retrospective video | PENDING | https://github.com/Soumen2581/Capstone-Project/releases/download/sprint-3/AgentMesh_Sprint3_Retrospective.mp4 |
+| Sprint 3 user stories (PDF) | PENDING | https://github.com/Soumen2581/Capstone-Project/blob/master/docs/agile/user-stories/AgentMesh_Sprint3_UserStories.pdf |
+| Sprint 3 user stories (Excel) | PENDING | https://github.com/Soumen2581/Capstone-Project/raw/master/docs/agile/user-stories/AgentMesh_Sprint3_UserStories.xlsx |
+| Sprint 3 test cases (PDF) | PENDING | https://github.com/Soumen2581/Capstone-Project/blob/master/docs/agile/test-cases/AgentMesh_Sprint3_TestCases.pdf |
+| Sprint 3 test cases (Excel) | PENDING | https://github.com/Soumen2581/Capstone-Project/raw/master/docs/agile/test-cases/AgentMesh_Sprint3_TestCases.xlsx |
+| Sprint 3 burndown chart | PENDING | https://github.com/Soumen2581/Capstone-Project/blob/master/docs/wiki/sprints/sprint-3-burndown.png |
+| Sprint 3 completed tasks board | PENDING | https://github.com/Soumen2581/Capstone-Project/blob/master/docs/wiki/sprints/sprint-3-completed-tasks.png |
+| Production deployment URL | PENDING | Document in README when live |
 
-## Do not invent
+## Already in personal repo (do not re-author)
 
-| Artifact | Expected location | Purpose | Format | Status |
-|----------|-------------------|---------|--------|--------|
-| **CS 691 technical paper** | `docs/paper/` or course wiki / LMS upload (**owner decides**) | Graded technical paper | PDF / DOCX as required by course | **MISSING — you will provide; not authored by this audit** |
-| Professor feedback excerpts | Sprint docs / wiki | Evidence of feedback | PDF / screenshots | **MISSING** unless already in team artifacts |
-| Meeting attendance / minutes beyond existing retros | `docs/agile/` | Process evidence | PDF / MD | **MISSING** unless team supplies |
-| Individual contribution statements not already in wiki | Wiki / paper appendix | Grading attribution | MD / PDF | **Requires team input** |
+| Artifact | Link |
+|----------|------|
+| Sprint 0–2 presentations / demos | [`docs/sprints/`](docs/sprints/) + [releases](https://github.com/Soumen2581/Capstone-Project/releases) |
+| Sprint 1–2 user stories & test cases | [`docs/agile/`](docs/agile/) |
+| Wiki home | [`docs/wiki/Home.md`](docs/wiki/Home.md) |
+| Architecture + ADRs | [`docs/architecture.md`](docs/architecture.md), [`docs/adr/`](docs/adr/) |
+| Audit checklist | [`docs/AUDIT_CHECKLIST_SPRINT0-2.md`](docs/AUDIT_CHECKLIST_SPRINT0-2.md) |
 
----
+## Rules
 
-## Sprint media (personal repo)
-
-| Artifact | Expected location | Status |
-|----------|-------------------|--------|
-| Sprint 2 presentation slides (PPTX + PDF) | `docs/sprints/AgentMesh_Sprint2_Presentation.{pptx,pdf}` | **COMPLETE** (copied into personal tree) |
-| Sprint 2 live demo (mp4) | `docs/sprints/AgentMesh_Sprint2_Demo.mp4` | **COMPLETE** |
-| Sprint 2 presentation / planning / retrospective videos | GitHub Release `sprint-2` on personal repo | **COMPLETE** — https://github.com/Soumen2581/Capstone-Project/releases/tag/sprint-2 |
-| Sprint 2 burndown + completed-tasks images | `docs/wiki/sprints/sprint-2-*.png` | **COMPLETE** |
-| Sprint 2 user stories (PDF + XLSX) | `docs/agile/user-stories/AgentMesh_Sprint2_UserStories.*` | **COMPLETE** |
-| Sprint 2 test cases (PDF + XLSX) | `docs/agile/test-cases/AgentMesh_Sprint2_TestCases.*` | **COMPLETE** |
-| Product user stories v2 workbook | `docs/agile/user-stories/AgentMesh_UserStories_v2.*` | **COMPLETE** |
-| Team Working Agreement | `docs/agile/Teamwork_Agreement_Team2_Phoenix.pdf` + `team-working-agreement.md` | **COMPLETE** (already present) |
-| Sprint 0–1 slides / demos / videos | `docs/sprints/`, releases `sprint-1`, YouTube | **COMPLETE** where historically committed; some Sprint 0 large mp4s may still live on course |
-
----
-
-## Application / engineering (not “submission attachments”)
-
-These must remain buildable without the missing paper or large videos:
-
-| Item | Status |
-|------|--------|
-| Source (`backend/`, `frontend/`) | **COMPLETE** |
-| Docker Compose + `.env.example` | **COMPLETE** |
-| CI (`.github/workflows/ci.yml`) | **COMPLETE** |
-| Automated tests | **COMPLETE** (run locally / CI) |
-| Architecture docs + ADRs | **COMPLETE** |
-| Wiki home page | Update in progress for Sprint 2 |
-
----
-
-## Upload checklist for you
-
-1. Drop the **technical paper** into the agreed path (or LMS) when ready — tell the agent the path if it should be linked from the README/wiki.
-2. Confirm YouTube URLs for Sprint 2 presentation / planning / retrospective if wiki should prefer stream over release download.
-3. Confirm any peer-evaluation Excel / LMS-only files that must not be committed.
-4. Do **not** ask this agent to fabricate paper content, fake screenshots, or fake professor feedback.
+- Never invent the technical paper or missing videos.
+- Prefer personal-repo blob/raw/release URLs for submission.
+- Course repo remains read-only reference.

@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 
 import { COMM_EDGES, OFFICE_AGENTS, type OfficeAgentId } from "@/lib/design/agents";
 
-/* Coordinates are % of the square stage above the message strip. */
+/** Hub centers — every edge meets the same point on each agent (the hub). */
 const POSITIONS: Record<OfficeAgentId, { x: number; y: number }> = {
   researcher: { x: 50, y: 12 },
   planner: { x: 18, y: 34 },
@@ -15,6 +15,10 @@ const POSITIONS: Record<OfficeAgentId, { x: number; y: number }> = {
   strategist: { x: 68, y: 66 },
   synthesizer: { x: 50, y: 86 },
 };
+
+function labelSide(x: number): "left" | "right" {
+  return x >= 50 ? "right" : "left";
+}
 
 type Props = {
   interactive?: boolean;
@@ -45,6 +49,7 @@ export function AgentNetwork({ interactive = true, dark = false, className = "" 
 
   const edge = useMemo(() => COMM_EDGES[pulse % COMM_EDGES.length]!, [pulse]);
   const selectedAgent = OFFICE_AGENTS.find((a) => a.id === selected) ?? null;
+  const activeAgent = OFFICE_AGENTS.find((a) => a.id === active) ?? null;
 
   return (
     <div className={`agent-network ${dark ? "dark" : ""} ${className}`.trim()}>
@@ -71,6 +76,32 @@ export function AgentNetwork({ interactive = true, dark = false, className = "" 
               />
             );
           })}
+          {OFFICE_AGENTS.map((agent) => {
+            const pos = POSITIONS[agent.id];
+            const isActive = agent.id === active;
+            return (
+              <g key={`hub-${agent.id}`}>
+                {isActive && !reduce && (
+                  <motion.circle
+                    cx={pos.x}
+                    cy={pos.y}
+                    r={3.2}
+                    className="net-hub-ring"
+                    initial={{ opacity: 0.55, scale: 0.7 }}
+                    animate={{ opacity: [0.45, 0.15, 0.45], scale: [0.85, 1.15, 0.85] }}
+                    transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+                    style={{ transformOrigin: `${pos.x}px ${pos.y}px` }}
+                  />
+                )}
+                <circle
+                  cx={pos.x}
+                  cy={pos.y}
+                  r={isActive ? 1.55 : 1.1}
+                  className={`net-hub ${isActive ? "on" : ""}`}
+                />
+              </g>
+            );
+          })}
           {!reduce && (
             <motion.circle
               key={pulse}
@@ -94,17 +125,18 @@ export function AgentNetwork({ interactive = true, dark = false, className = "" 
         {OFFICE_AGENTS.map((agent) => {
           const pos = POSITIONS[agent.id];
           const isActive = agent.id === active;
+          const side = labelSide(pos.x);
           return (
             <button
               key={agent.id}
               type="button"
-              className={`net-node ${isActive ? "on" : ""}`}
+              className={`net-node net-node-${side} ${isActive ? "on" : ""}`}
               style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
               onClick={() => interactive && setSelected(agent.id)}
               disabled={!interactive}
               aria-pressed={selected === agent.id}
+              aria-current={isActive ? "true" : undefined}
             >
-              <span className="net-node-dot" aria-hidden />
               <span className="net-node-name">{agent.name}</span>
               {isActive && <span className="net-node-status">Active</span>}
             </button>
@@ -140,6 +172,9 @@ export function AgentNetwork({ interactive = true, dark = false, className = "" 
       </div>
 
       <p className="net-message" aria-live="polite">
+        <span className="net-message-active">
+          Active · {activeAgent?.name ?? "Agent"}
+        </span>
         <strong>{OFFICE_AGENTS.find((a) => a.id === edge.from)?.name}</strong>
         {" → "}
         <strong>{OFFICE_AGENTS.find((a) => a.id === edge.to)?.name}</strong>

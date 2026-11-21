@@ -83,8 +83,7 @@ export function AccountMenu() {
       )}
       {!CLIENT_ID && (
         <p className="muted">
-          Set NEXT_PUBLIC_GOOGLE_CLIENT_ID and GOOGLE_CLIENT_ID, then AUTH_MODE=google, to
-          replace the operator id with a verified Google session.
+          Set NEXT_PUBLIC_GOOGLE_CLIENT_ID and GOOGLE_CLIENT_ID to enable Google sign-in.
         </p>
       )}
       {error && <p className="muted">{error}</p>}
