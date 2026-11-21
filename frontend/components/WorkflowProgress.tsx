@@ -3,7 +3,6 @@
 import { useMemo } from "react";
 
 import { CostSummary } from "@/components/CostSummary";
-import FadeContent from "@/components/react-bits/FadeContent";
 import { rankNodes } from "@/lib/graph";
 import type { NodeView, WorkflowStatus, WorkflowView } from "@/lib/types";
 import { TERMINAL_STATUSES } from "@/lib/types";
@@ -249,37 +248,35 @@ export function WorkflowProgress({
       {!compact && <CostSummary workflow={workflow} />}
 
       {workflow.final_result && Object.keys(workflow.final_result).length > 0 && (
-        <FadeContent trigger="mount" duration={0.55} className="workflow-result-fade">
-          <div style={{ marginTop: 16 }} data-testid="workflow-result">
-            <h3 className="panel-title">Result</h3>
-            {answer ? (
-              <pre className="answer" data-testid="workflow-answer">
-                {answer}
-              </pre>
-            ) : (
-              <pre className="answer">{JSON.stringify(workflow.final_result, null, 2)}</pre>
+        <div style={{ marginTop: 16 }} data-testid="workflow-result" className="workflow-result-fade">
+          <h3 className="panel-title">Result</h3>
+          {answer ? (
+            <pre className="answer" data-testid="workflow-answer">
+              {answer}
+            </pre>
+          ) : (
+            <pre className="answer">{JSON.stringify(workflow.final_result, null, 2)}</pre>
+          )}
+          {Array.isArray(workflow.final_result.contributors) &&
+            workflow.final_result.contributors.length > 0 && (
+              <details className="selection-reasons" open data-testid="result-contributors">
+                <summary className="muted">
+                  Agent contributions ({workflow.final_result.contributors.length})
+                </summary>
+                <ul>
+                  {(workflow.final_result.contributors as Array<Record<string, unknown>>).map(
+                    (item, index) => (
+                      <li key={`${String(item.node_key ?? index)}`} className="step-meta">
+                        <strong>{String(item.agent_id ?? "agent")}</strong>
+                        {item.summary ? `: ${String(item.summary)}` : ""}
+                        {item.node_key ? ` · step ${String(item.node_key)}` : ""}
+                      </li>
+                    ),
+                  )}
+                </ul>
+              </details>
             )}
-            {Array.isArray(workflow.final_result.contributors) &&
-              workflow.final_result.contributors.length > 0 && (
-                <details className="selection-reasons" open data-testid="result-contributors">
-                  <summary className="muted">
-                    Agent contributions ({workflow.final_result.contributors.length})
-                  </summary>
-                  <ul>
-                    {(workflow.final_result.contributors as Array<Record<string, unknown>>).map(
-                      (item, index) => (
-                        <li key={`${String(item.node_key ?? index)}`} className="step-meta">
-                          <strong>{String(item.agent_id ?? "agent")}</strong>
-                          {item.summary ? `: ${String(item.summary)}` : ""}
-                          {item.node_key ? ` · step ${String(item.node_key)}` : ""}
-                        </li>
-                      ),
-                    )}
-                  </ul>
-                </details>
-              )}
-          </div>
-        </FadeContent>
+        </div>
       )}
 
       {showAdvanced && (

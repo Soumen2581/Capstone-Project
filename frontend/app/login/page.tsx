@@ -6,7 +6,6 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 
 import { BrandLogo } from "@/components/BrandLogo";
 import { AmbientBackground } from "@/components/visuals/backgrounds/AmbientBackground";
-import { BlurText } from "@/components/visuals/text/BlurText";
 import {
   getOperatorId,
   loginWithGoogle,
@@ -96,13 +95,11 @@ export default function LoginPage() {
 
   return (
     <main className="login-shell" data-testid="login-page">
-      <AmbientBackground variant="threads" />
+      <AmbientBackground variant="static" />
       <section className="login-card">
         <BrandLogo size={48} variant="mark" />
         <h1>{BRAND_NAME}</h1>
-        <p className="login-tagline">
-          <BlurText delay={0.04}>{BRAND_TAGLINE}</BlurText>
-        </p>
+        <p className="login-tagline">{BRAND_TAGLINE}</p>
 
         <form onSubmit={continueAsOperator} className="stack-gap">
           <label className="field">

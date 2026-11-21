@@ -50,7 +50,7 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: blur(0.3em) saturate(1.4);
+  filter: none;
   opacity: var(--gt-glow);
   pointer-events: none;
   user-select: none;

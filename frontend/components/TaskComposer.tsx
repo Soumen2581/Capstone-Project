@@ -2,7 +2,6 @@
 
 import { FormEvent } from "react";
 
-import { BlurText } from "@/components/visuals/text/BlurText";
 import { BrandGradientText } from "@/components/visuals/text/BrandGradientText";
 import type { AgentSummary, RoutingStrategy } from "@/lib/types";
 
@@ -80,9 +79,9 @@ export function TaskComposer({
           <h2 className="composer-title">
             <BrandGradientText className="composer-gradient">Command</BrandGradientText>
           </h2>
-          <BlurText className="muted" style={{ margin: 0, display: "block" }} delay={0.05}>
+          <p className="muted" style={{ margin: 0 }}>
             {`Describe the outcome you need. Agent Mesh selects specialists, routes models, and returns one synthesized result${offlineDemo ? " (demo mode)." : "."}`}
-          </BlurText>
+          </p>
         </>
       )}
 
