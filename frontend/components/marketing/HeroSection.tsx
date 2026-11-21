@@ -4,6 +4,9 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 
 import { AgentNetwork } from "@/components/marketing/AgentNetwork";
+import { AmbientBackground } from "@/components/visuals/backgrounds/AmbientBackground";
+import { BlurText } from "@/components/visuals/text/BlurText";
+import { BrandGradientText } from "@/components/visuals/text/BrandGradientText";
 import { BRAND_NAME } from "@/lib/brand";
 
 export function HeroSection() {
@@ -11,6 +14,7 @@ export function HeroSection() {
 
   return (
     <section className="mkt-hero" id="top">
+      <AmbientBackground variant="veil" className="mkt-hero-ambient" />
       <div className="mkt-hero-atmosphere" aria-hidden />
       <div className="mkt-grid mkt-hero-layout">
         <div className="mkt-hero-copy">
@@ -20,16 +24,11 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45 }}
           >
-            {BRAND_NAME}
+            <BrandGradientText>{BRAND_NAME}</BrandGradientText>
           </motion.h1>
-          <motion.p
-            className="mkt-display"
-            initial={reduce ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.04 }}
-          >
+          <BlurText className="mkt-display" delay={0.06}>
             Specialist agents. One accountable result.
-          </motion.p>
+          </BlurText>
           <motion.p
             className="mkt-lede"
             initial={reduce ? false : { opacity: 0, y: 12 }}

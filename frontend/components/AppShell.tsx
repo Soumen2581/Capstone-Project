@@ -1,21 +1,41 @@
 "use client";
 
+import {
+  Bot,
+  Hammer,
+  LayoutDashboard,
+  Menu,
+  MessageSquare,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Settings,
+  Sparkles,
+  Workflow,
+  X,
+} from "lucide-react";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 import { BrandLogo } from "@/components/BrandLogo";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { AmbientBackground } from "@/components/visuals/backgrounds/AmbientBackground";
 import { BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
 
 export type NavTab = "home" | "agents" | "build" | "work" | "messages" | "settings";
 
-const NAV: { id: NavTab; label: string; testId: string }[] = [
-  { id: "home", label: "Home", testId: "tab-command" },
-  { id: "agents", label: "Agents", testId: "tab-agents" },
-  { id: "build", label: "Build", testId: "tab-build" },
-  { id: "work", label: "Work", testId: "tab-work" },
-  { id: "messages", label: "Messages", testId: "tab-activity" },
-  { id: "settings", label: "Settings", testId: "tab-settings" },
+const NAV: {
+  id: NavTab;
+  label: string;
+  testId: string;
+  icon: typeof Sparkles;
+  ambient: "threads" | "dots" | "veil" | "static";
+}[] = [
+  { id: "home", label: "Command", testId: "tab-command", icon: Sparkles, ambient: "threads" },
+  { id: "agents", label: "Agents", testId: "tab-agents", icon: Bot, ambient: "dots" },
+  { id: "build", label: "Build", testId: "tab-build", icon: Hammer, ambient: "dots" },
+  { id: "work", label: "Work", testId: "tab-work", icon: Workflow, ambient: "static" },
+  { id: "messages", label: "Messages", testId: "tab-activity", icon: MessageSquare, ambient: "static" },
+  { id: "settings", label: "Settings", testId: "tab-settings", icon: Settings, ambient: "static" },
 ];
 
 export function AppShell({
@@ -29,44 +49,106 @@ export function AppShell({
   onNewTask: () => void;
   children: ReactNode;
 }) {
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const active = NAV.find((item) => item.id === tab) ?? NAV[0]!;
+
   return (
-    <div className="app-shell">
-      <header className="titlebar">
-        <div className="brand-row">
-          <Link href="/" className="brand-mark-link" aria-label={`${BRAND_NAME} marketing site`}>
-            <BrandLogo size={36} variant="mark" />
-          </Link>
-          <div className="brand-block">
-            <h1 className="brand" data-testid="brand">
-              {BRAND_NAME}
-            </h1>
-            <p className="tagline">{BRAND_TAGLINE}</p>
+    <div className={`app-shell${collapsed ? " collapsed" : ""}`}>
+      <AmbientBackground variant={active.ambient} />
+
+      <aside className="app-sidebar" aria-label="Workspace navigation">
+        <Link href="/" className="app-sidebar-brand" aria-label={`${BRAND_NAME} marketing site`}>
+          <BrandLogo size={34} variant="mark" />
+          <span className="app-sidebar-brand-text">
+            <strong>{BRAND_NAME}</strong>
+            <span>{BRAND_TAGLINE}</span>
+          </span>
+        </Link>
+
+        <nav className="app-nav" aria-label="Office sections" data-testid="office-tabs">
+          {NAV.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                className={tab === item.id ? "app-nav-btn on" : "app-nav-btn"}
+                data-testid={item.testId}
+                onClick={() => onTab(item.id)}
+              >
+                <Icon className="app-nav-icon" aria-hidden />
+                <span className="app-nav-label">{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        <div className="app-sidebar-foot">
+          <button
+            type="button"
+            className="sidebar-toggle"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            onClick={() => setCollapsed((value) => !value)}
+          >
+            {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
+          </button>
+          <div className="sidebar-foot-meta">
+            <ThemeToggle compact />
           </div>
         </div>
-        <nav className="tabs" aria-label="Office sections" data-testid="office-tabs">
-          {NAV.map((item) => (
+      </aside>
+
+      <div className="app-main">
+        <header className="app-topbar">
+          <div className="brand-row">
             <button
-              key={item.id}
               type="button"
-              className={tab === item.id ? "tab on" : "tab"}
-              data-testid={item.testId}
-              onClick={() => onTab(item.id)}
+              className="mobile-nav-toggle"
+              aria-label="Open navigation"
+              onClick={() => setMobileOpen((value) => !value)}
             >
-              {item.label}
+              {mobileOpen ? <X size={16} /> : <Menu size={16} />}
             </button>
-          ))}
-        </nav>
-        <div className="header-meta">
-          <ThemeToggle compact />
-          <Link href="/" className="px-btn ghost">
-            Product site
-          </Link>
-          <button type="button" className="px-btn primary" onClick={onNewTask}>
-            New request
-          </button>
-        </div>
-      </header>
-      {children}
+            <LayoutDashboard size={16} aria-hidden className="app-nav-icon" />
+            <div className="brand-block">
+              <h1 className="brand" data-testid="brand">
+                {active.label}
+              </h1>
+              <p className="tagline">{BRAND_NAME} workspace</p>
+            </div>
+          </div>
+          <div className="app-topbar-actions">
+            <Link href="/" className="px-btn ghost">
+              Product site
+            </Link>
+            <button type="button" className="px-btn primary" onClick={onNewTask}>
+              New request
+            </button>
+          </div>
+        </header>
+
+        {mobileOpen && (
+          <nav className="mobile-nav-drawer" aria-label="Mobile sections">
+            {NAV.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className={tab === item.id ? "tab on" : "tab"}
+                onClick={() => {
+                  onTab(item.id);
+                  setMobileOpen(false);
+                }}
+              >
+                {item.label}
+              </button>
+            ))}
+            <ThemeToggle compact />
+          </nav>
+        )}
+
+        {children}
+      </div>
     </div>
   );
 }

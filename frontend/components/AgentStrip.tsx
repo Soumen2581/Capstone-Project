@@ -1,8 +1,8 @@
 "use client";
 
-import type { AgentOfficeView, AgentSummary } from "@/lib/types";
-import { shortAgentName } from "@/lib/office";
 import { ProviderIcon, providerIdFromModel } from "@/components/ProviderIcon";
+import { shortAgentName } from "@/lib/office";
+import type { AgentOfficeView, AgentSummary } from "@/lib/types";
 
 function statusTone(status: string): string {
   if (status === "working" || status === "thinking") {
@@ -51,7 +51,7 @@ export function AgentCard({
   return (
     <button
       type="button"
-      className={`agent-card ${selected ? "on" : ""}`}
+      className={`agent-card agent-glare ${selected ? "on" : ""}`}
       onClick={onSelect}
       aria-pressed={selected}
       style={{ ["--stagger" as string]: `${staggerMs}ms` }}

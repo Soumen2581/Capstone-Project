@@ -21,7 +21,7 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 const THEME_CHANGE = "agent-mesh-theme-change";
 
 function serverPreference(): ThemePreference {
-  return "light";
+  return "dark";
 }
 
 function subscribe(onChange: () => void) {
@@ -59,8 +59,8 @@ export function useTheme(): ThemeContextValue {
   const ctx = useContext(ThemeContext);
   if (!ctx) {
     return {
-      preference: "light",
-      resolved: "light",
+      preference: "dark",
+      resolved: "dark",
       setPreference: () => undefined,
     };
   }
@@ -70,5 +70,5 @@ export function useTheme(): ThemeContextValue {
 /** Resolve without requiring a mounted preference (for one-off reads). */
 export function useResolvedTheme(): ResolvedTheme {
   const { resolved } = useTheme();
-  return resolved || resolveTheme("light");
+  return resolved || resolveTheme("dark");
 }
