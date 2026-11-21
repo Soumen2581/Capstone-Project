@@ -89,6 +89,8 @@ async def test_agent_schema_endpoint_returns_contracts(db_client: AsyncClient) -
     assert response.status_code == 200
     body = response.json()
     assert body["agent_id"] == "testing-agent"
+    assert body["input_schema"]["type"] == "object"
+    assert "objective" in body["input_schema"]["properties"]
     assert body["output_schema"]["type"] == "object"
     assert "passed" in body["output_schema"]["properties"]
 

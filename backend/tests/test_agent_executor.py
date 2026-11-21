@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import time
 import uuid
 
 import pytest
@@ -480,10 +481,14 @@ async def test_provider_unavailability_falls_back_to_the_next_model() -> None:
     backup = FakeProvider()
     backup.queue_json({"answer": "from-backup"})
     agent = simple_agent()
+    started = time.perf_counter()
     output = await AgentExecutor(ProviderRegistry([DownProvider(), backup])).execute(
         agent, input_for(agent)
     )
+    elapsed = time.perf_counter() - started
 
     assert output.status is ExecutionStatus.SUCCEEDED
     assert output.payload == {"answer": "from-backup"}
     assert output.provider == "fake"
+    assert output.fallback_from_provider == "down"
+    assert elapsed < 5.0, f"fallback took {elapsed:.3f}s; acceptance is within 5s"

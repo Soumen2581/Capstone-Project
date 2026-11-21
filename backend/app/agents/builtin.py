@@ -17,9 +17,67 @@ from __future__ import annotations
 from app.domain.enums import Capability, ModelTrait
 from app.schemas.agent import AgentDefinition, AgentLimits, ModelPreference, RetryPolicy
 
+
 # Reusable JSON Schema fragments. Every output schema is an object so downstream input
 # can be built from named fields.
 _STRING_ARRAY = {"type": "array", "items": {"type": "string"}}
+
+# Shared shape of what the executor validates before calling a model (TC_49).
+_UPSTREAM_ITEM = {
+    "type": "object",
+    "required": ["node_key", "agent_id", "payload"],
+    "properties": {
+        "node_key": {"type": "string", "minLength": 1},
+        "agent_id": {"type": "string", "minLength": 1},
+        "payload": {"type": "object"},
+    },
+    "additionalProperties": False,
+}
+
+
+def _input_schema(
+    *,
+    description: str,
+    parameter_properties: dict[str, object] | None = None,
+    require_upstream: bool = False,
+) -> dict[str, object]:
+    """JSON Schema for the agent hand-off document the executor validates."""
+    required = ["objective"]
+    if require_upstream:
+        required.append("upstream")
+    return {
+        "type": "object",
+        "description": description,
+        "required": required,
+        "additionalProperties": False,
+        "properties": {
+            "objective": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Natural-language objective for this agent step.",
+            },
+            "parameters": {
+                "type": "object",
+                "description": "Operator or planner parameters for this step.",
+                "properties": parameter_properties or {},
+                "additionalProperties": True,
+            },
+            "upstream": {
+                "type": "array",
+                "description": "Validated payloads from upstream workflow nodes.",
+                "items": _UPSTREAM_ITEM,
+                "minItems": 1 if require_upstream else 0,
+            },
+            "feedback": {
+                "type": ["string", "null"],
+                "description": "Retry feedback from a prior failed attempt, if any.",
+            },
+            "context_notes": {
+                "type": ["string", "null"],
+                "description": "Hive/memory excerpts assembled for this attempt.",
+            },
+        },
+    }
 
 
 PLANNING_AGENT = AgentDefinition(
@@ -36,6 +94,21 @@ PLANNING_AGENT = AgentDefinition(
         "it requires. Do not invent work the request does not ask for. If one step is "
         "enough, return one step."
     ),
+    input_schema=_input_schema(
+        description=(
+            "Decomposes the operator brief into capability-tagged steps. Requires a "
+            "non-empty objective; optional max_steps bounds the plan size."
+        ),
+        parameter_properties={
+            "max_steps": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 32,
+                "description": "Optional upper bound on plan steps.",
+            },
+        },
+    ),
+
     output_schema={
         "type": "object",
         "required": ["steps"],
@@ -81,6 +154,21 @@ RESEARCH_AGENT = AgentDefinition(
         "and your knowledge. Separate established facts from inference, and attribute "
         "every claim you can. State explicitly what you could not determine."
     ),
+    input_schema=_input_schema(
+        description=(
+            "Gathers findings for a research objective. Accepts an optional query and "
+            "seed URLs in parameters; upstream payloads are optional context."
+        ),
+        parameter_properties={
+            "query": {"type": "string", "description": "Override search query."},
+            "urls": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Seed URLs to prioritise.",
+            },
+        },
+    ),
+
     output_schema={
         "type": "object",
         "required": ["findings"],
@@ -132,6 +220,23 @@ SECURITY_AGENT = AgentDefinition(
         "an empty result is a valid and useful answer, and inventing issues is worse "
         "than finding none."
     ),
+    input_schema=_input_schema(
+        description=(
+            "Audits code for vulnerabilities. Supply code inline via parameters.code "
+            "and/or file paths via parameters.files; upstream coding payloads are also "
+            "accepted."
+        ),
+        parameter_properties={
+            "code": {"type": "string", "description": "Source text to audit."},
+            "files": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Repository paths in scope.",
+            },
+            "language": {"type": "string"},
+        },
+    ),
+
     output_schema={
         "type": "object",
         "required": ["findings"],
@@ -192,6 +297,22 @@ CODING_AGENT = AgentDefinition(
         "If upstream feedback describes a test failure, fix that specific failure rather "
         "than rewriting unrelated code."
     ),
+    input_schema=_input_schema(
+        description=(
+            "Produces code changes for the objective. Optional parameters.language and "
+            "parameters.target_files refine scope; upstream security/review findings are "
+            "consumed when present."
+        ),
+        parameter_properties={
+            "language": {"type": "string"},
+            "target_files": {
+                "type": "array",
+                "items": {"type": "string"},
+            },
+            "framework": {"type": "string"},
+        },
+    ),
+
     output_schema={
         "type": "object",
         "required": ["changes", "summary"],
@@ -254,6 +375,17 @@ TESTING_AGENT = AgentDefinition(
         "root cause and say which file must change — that message is routed back to the "
         "coding agent, so be specific."
     ),
+    input_schema=_input_schema(
+        description=(
+            "Writes or analyses tests for upstream code changes. Prefer upstream coding "
+            "payloads that include a changes array; parameters.test_framework is optional."
+        ),
+        parameter_properties={
+            "test_framework": {"type": "string"},
+            "focus": {"type": "string"},
+        },
+    ),
+
     output_schema={
         "type": "object",
         "required": ["passed"],
@@ -310,6 +442,19 @@ REVIEW_AGENT = AgentDefinition(
         "objective. Report concrete defects with their location and severity. Approve "
         "only if the objective is met; say plainly what is missing when it is not."
     ),
+    input_schema=_input_schema(
+        description=(
+            "Reviews upstream work against the original objective. Expects at least one "
+            "upstream payload (code, tests, or findings) when used in a pipeline."
+        ),
+        parameter_properties={
+            "strictness": {
+                "type": "string",
+                "enum": ["lenient", "standard", "strict"],
+            },
+        },
+    ),
+
     output_schema={
         "type": "object",
         "required": ["approved"],
@@ -352,6 +497,18 @@ DOCUMENTATION_AGENT = AgentDefinition(
         "happen. Use only what upstream agents actually reported; if something was not "
         "done or was skipped, say so rather than omitting it."
     ),
+    input_schema=_input_schema(
+        description=(
+            "Assembles a reader-facing document from upstream agent results. Upstream "
+            "payloads should carry the findings to include; parameters.format selects "
+            "markdown/text/html."
+        ),
+        parameter_properties={
+            "format": {"type": "string", "enum": ["markdown", "text", "html"]},
+            "audience": {"type": "string"},
+        },
+    ),
+
     output_schema={
         "type": "object",
         "required": ["document"],
@@ -388,6 +545,20 @@ DATA_CLEANER_AGENT = AgentDefinition(
         "`change_summary`, and one entry per change in `changes`. If no dataset was "
         "supplied, say so in `change_summary` and return `cleaned_data` empty."
     ),
+    input_schema=_input_schema(
+        description=(
+            "Cleans tabular data. Pass CSV/JSON text in parameters.dataset (or embed it "
+            "in the objective). Upstream datasets are also accepted."
+        ),
+        parameter_properties={
+            "dataset": {
+                "type": "string",
+                "description": "Raw CSV or JSON dataset to clean.",
+            },
+            "format": {"type": "string", "enum": ["csv", "json", "tsv"]},
+        },
+    ),
+
     output_schema={
         "type": "object",
         "required": ["summary", "cleaned_data", "change_summary"],
@@ -428,6 +599,20 @@ DATA_ANALYST_AGENT = AgentDefinition(
         "name/value pairs. If no dataset is available, say so clearly in "
         "`analysis` and leave `insights` empty."
     ),
+    input_schema=_input_schema(
+        description=(
+            "Analyses cleaned tabular data. Prefer upstream data-cleaner payloads with "
+            "cleaned_data; parameters.dataset is a fallback when no upstream exists."
+        ),
+        parameter_properties={
+            "dataset": {"type": "string"},
+            "questions": {
+                "type": "array",
+                "items": {"type": "string"},
+            },
+        },
+    ),
+
     output_schema={
         "type": "object",
         "required": ["summary", "analysis", "insights"],
@@ -479,6 +664,17 @@ GENERAL_AGENT = AgentDefinition(
         "it. `summary` is only a one-line office label.\n"
         "If a specialist desk is clearly needed later, note that in follow_ups."
     ),
+    input_schema=_input_schema(
+        description=(
+            "General-purpose assistance for briefs that do not require a specialist. "
+            "Requires a non-empty objective; optional tone/format parameters."
+        ),
+        parameter_properties={
+            "tone": {"type": "string"},
+            "format": {"type": "string"},
+        },
+    ),
+
     output_schema={
         "type": "object",
         "required": ["summary", "answer"],

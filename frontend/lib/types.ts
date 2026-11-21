@@ -21,6 +21,10 @@ export type ExecutionSummary = {
   status: string;
   provider: string | null;
   model: string | null;
+  routing_reason?: string | null;
+  routing_alternatives?: string[];
+  fallback_from_provider?: string | null;
+  fallback_from_model?: string | null;
   input_tokens: number;
   output_tokens: number;
   cost_usd: number;

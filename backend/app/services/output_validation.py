@@ -83,6 +83,29 @@ def validate_agent_output(text: str, output_schema: dict[str, object]) -> Valida
     return ValidationOutcome(valid=True, payload=payload, recovered_from_fence=recovered)
 
 
+def validate_agent_input(
+    document: dict[str, object], input_schema: dict[str, object]
+) -> ValidationOutcome:
+    """Schema-check the hand-off document an agent is about to receive (TC_49).
+
+    Empty schemas are treated as "no contract" so custom agents without an input
+    schema keep working; built-ins always declare a meaningful object schema.
+    """
+    if not input_schema:
+        return ValidationOutcome(valid=True, payload=document)
+
+    validator = Draft202012Validator(input_schema)
+    errors = sorted(validator.iter_errors(document), key=lambda e: list(e.path))
+    if errors:
+        return ValidationOutcome(
+            valid=False,
+            payload=document,
+            error=_describe_errors(errors),
+            fields=tuple(dict.fromkeys(_field_of(error) for error in errors)),
+        )
+    return ValidationOutcome(valid=True, payload=document)
+
+
 def _field_of(error: SchemaValidationError) -> str:
     location = "/".join(str(part) for part in error.path)
     # A missing required property is reported against its parent; name the property.

@@ -22,6 +22,10 @@ class ExecutionSummary(BaseModel):
     status: ExecutionStatus
     provider: str | None
     model: str | None
+    routing_reason: str | None = None
+    routing_alternatives: list[str] = Field(default_factory=list)
+    fallback_from_provider: str | None = None
+    fallback_from_model: str | None = None
     input_tokens: int
     output_tokens: int
     cost_usd: float
@@ -101,6 +105,10 @@ class WorkflowView(BaseModel):
                         status=ExecutionStatus(execution.status),
                         provider=execution.provider_id,
                         model=execution.model_id,
+                        routing_reason=execution.routing_reason,
+                        routing_alternatives=list(execution.routing_alternatives or []),
+                        fallback_from_provider=execution.fallback_from_provider,
+                        fallback_from_model=execution.fallback_from_model,
                         input_tokens=execution.input_tokens,
                         output_tokens=execution.output_tokens,
                         cost_usd=execution.cost_usd,

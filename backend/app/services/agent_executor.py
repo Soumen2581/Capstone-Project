@@ -29,7 +29,7 @@ from app.providers.base import (
 from app.providers.registry import NoSuitableModelError, ProviderRegistry
 from app.schemas.agent import AgentDefinition
 from app.schemas.execution import AgentInput, AgentOutput, ExecutionError, TokenUsage
-from app.services.output_validation import validate_agent_output
+from app.services.output_validation import validate_agent_input, validate_agent_output
 from app.services.prompting import build_system_prompt, build_user_prompt
 
 logger = get_logger(__name__)
@@ -64,6 +64,26 @@ class AgentExecutor:
             attempt=agent_input.attempt,
         )
 
+        input_outcome = validate_agent_input(_input_document(agent_input), agent.input_schema)
+        if not input_outcome.valid:
+            log.warning(
+                "agent_input_invalid",
+                validation_error=input_outcome.error,
+                fields=list(input_outcome.fields),
+            )
+            return self._failure(
+                agent,
+                agent_input,
+                ExecutionError(
+                    kind=ErrorKind.INVALID_REQUEST,
+                    message=input_outcome.error or "input failed schema validation",
+                    retryable=False,
+                    details={"fields": list(input_outcome.fields)},
+                ),
+                started_at,
+                started,
+            )
+
         try:
             ranked = self._providers.rank_models(agent.model_preference)
         except NoSuitableModelError as exc:
@@ -80,6 +100,8 @@ class AgentExecutor:
 
         last_error: AgentOutput | None = None
         skipped_providers: set[str] = set()
+        prior_provider: str | None = None
+        prior_model: str | None = None
         for index, decision in enumerate(ranked):
             provider, model = decision.provider, decision.model
             if provider.name in skipped_providers:
@@ -104,6 +126,8 @@ class AgentExecutor:
                 update={
                     "routing_reason": decision.reason,
                     "routing_alternatives": alternatives,
+                    "fallback_from_provider": prior_provider,
+                    "fallback_from_model": prior_model,
                 }
             )
             if annotated.succeeded:
@@ -129,6 +153,7 @@ class AgentExecutor:
             )
             if nxt is None:
                 return annotated
+            prior_provider, prior_model = provider.name, model.id
             log.warning(
                 "provider_fallback",
                 from_provider=provider.name,
@@ -384,6 +409,25 @@ def _can_fallback(output: AgentOutput) -> bool:
         ErrorKind.AUTHENTICATION,
         ErrorKind.BUDGET_EXCEEDED,
         ErrorKind.CANCELLED,
+        ErrorKind.INVALID_REQUEST,
+    }
+
+
+def _input_document(agent_input: AgentInput) -> dict[str, object]:
+    """Project ``AgentInput`` into the JSON document ``input_schema`` describes."""
+    return {
+        "objective": agent_input.objective,
+        "parameters": dict(agent_input.parameters),
+        "upstream": [
+            {
+                "node_key": item.node_key,
+                "agent_id": item.agent_id,
+                "payload": dict(item.payload),
+            }
+            for item in agent_input.upstream
+        ],
+        "feedback": agent_input.feedback,
+        "context_notes": agent_input.context_notes,
     }
 
 

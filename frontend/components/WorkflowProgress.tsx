@@ -2,6 +2,8 @@
 
 import { useMemo } from "react";
 
+import { CostSummary } from "@/components/CostSummary";
+import FadeContent from "@/components/react-bits/FadeContent";
 import { rankNodes } from "@/lib/graph";
 import type { NodeView, WorkflowStatus, WorkflowView } from "@/lib/types";
 import { TERMINAL_STATUSES } from "@/lib/types";
@@ -148,6 +150,24 @@ export function WorkflowProgress({
                       {node.id ? ` · Instance ${node.id.slice(0, 8)}` : ""}
                     </div>
                   )}
+                  {!compact && node.executions.at(-1) && (
+                    <div className="step-meta" data-testid={`node-routing-${node.key}`}>
+                      {(() => {
+                        const exec = node.executions.at(-1)!;
+                        const modelLabel = [exec.provider, exec.model].filter(Boolean).join(" / ");
+                        const bits = [
+                          modelLabel || null,
+                          exec.routing_reason,
+                          exec.fallback_from_provider
+                            ? `fallback from ${exec.fallback_from_provider}:${exec.fallback_from_model ?? "?"}`
+                            : null,
+                          exec.cost_usd > 0 ? `$${exec.cost_usd.toFixed(4)}` : null,
+                          exec.latency_ms > 0 ? `${Math.round(exec.latency_ms)} ms` : null,
+                        ].filter(Boolean);
+                        return bits.join(" · ");
+                      })()}
+                    </div>
+                  )}
                   {!compact && workflow.edges.some((edge) => edge.target === node.key) && (
                     <div className="step-meta">
                       Depends on:{" "}
@@ -226,17 +246,40 @@ export function WorkflowProgress({
         </details>
       )}
 
+      {!compact && <CostSummary workflow={workflow} />}
+
       {workflow.final_result && Object.keys(workflow.final_result).length > 0 && (
-        <div style={{ marginTop: 16 }} data-testid="workflow-result">
-          <h3 className="panel-title">Result</h3>
-          {answer ? (
-            <pre className="answer" data-testid="workflow-answer">
-              {answer}
-            </pre>
-          ) : (
-            <pre className="answer">{JSON.stringify(workflow.final_result, null, 2)}</pre>
-          )}
-        </div>
+        <FadeContent trigger="mount" duration={0.55} className="workflow-result-fade">
+          <div style={{ marginTop: 16 }} data-testid="workflow-result">
+            <h3 className="panel-title">Result</h3>
+            {answer ? (
+              <pre className="answer" data-testid="workflow-answer">
+                {answer}
+              </pre>
+            ) : (
+              <pre className="answer">{JSON.stringify(workflow.final_result, null, 2)}</pre>
+            )}
+            {Array.isArray(workflow.final_result.contributors) &&
+              workflow.final_result.contributors.length > 0 && (
+                <details className="selection-reasons" open data-testid="result-contributors">
+                  <summary className="muted">
+                    Agent contributions ({workflow.final_result.contributors.length})
+                  </summary>
+                  <ul>
+                    {(workflow.final_result.contributors as Array<Record<string, unknown>>).map(
+                      (item, index) => (
+                        <li key={`${String(item.node_key ?? index)}`} className="step-meta">
+                          <strong>{String(item.agent_id ?? "agent")}</strong>
+                          {item.summary ? `: ${String(item.summary)}` : ""}
+                          {item.node_key ? ` · step ${String(item.node_key)}` : ""}
+                        </li>
+                      ),
+                    )}
+                  </ul>
+                </details>
+              )}
+          </div>
+        </FadeContent>
       )}
 
       {showAdvanced && (

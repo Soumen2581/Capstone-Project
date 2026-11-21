@@ -276,12 +276,17 @@ class WorkflowRepository:
         node = await self.get_node(workflow_id, output.node_key)
         node.attempts = max(node.attempts, output.attempt)
 
+        fallback_provider, fallback_model = _fallback_origin(output)
         execution = ExecutionRecord(
             node_id=node.id,
             attempt=output.attempt,
             status=output.status,
             provider_id=output.provider,
             model_id=output.model,
+            routing_reason=output.routing_reason,
+            routing_alternatives=list(output.routing_alternatives),
+            fallback_from_provider=fallback_provider,
+            fallback_from_model=fallback_model,
             input_tokens=output.usage.input_tokens,
             output_tokens=output.usage.output_tokens,
             cost_usd=output.cost_usd,
@@ -563,3 +568,7 @@ class WorkflowRepository:
 _TERMINAL_WORKFLOW_STATUSES = frozenset(
     {WorkflowStatus.COMPLETED, WorkflowStatus.FAILED, WorkflowStatus.CANCELLED}
 )
+
+
+def _fallback_origin(output: AgentOutput) -> tuple[str | None, str | None]:
+    return output.fallback_from_provider, output.fallback_from_model

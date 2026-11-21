@@ -174,6 +174,19 @@ function TurnView({
         <article className="chat-bubble agent result">
           <div className="chat-role">Result</div>
           <pre className="chat-body answer">{answer}</pre>
+          {Array.isArray(turn.final_result.contributors) &&
+            turn.final_result.contributors.length > 0 && (
+              <div className="meta" data-testid="chat-contributors">
+                Contributors:{" "}
+                {(turn.final_result.contributors as Array<Record<string, unknown>>)
+                  .map((item) => String(item.agent_id ?? "agent"))
+                  .join(", ")}
+              </div>
+            )}
+          <div className="meta">
+            Cost ${turn.total_cost_usd.toFixed(4)}
+            {turn.final_result.partial ? " · partial result" : ""}
+          </div>
         </article>
       )}
 

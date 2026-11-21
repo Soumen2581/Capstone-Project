@@ -2352,3 +2352,48 @@ button:disabled {
   margin: var(--space-2) 0 0;
   padding-left: var(--space-4);
 }
+
+.cost-summary {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.cost-totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-3);
+  margin: var(--space-3) 0;
+}
+
+.cost-totals strong {
+  display: block;
+  margin-top: 2px;
+}
+
+.cost-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.cost-table th,
+.cost-table td {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.workflow-result-fade {
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workflow-result-fade {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+}
+

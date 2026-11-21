@@ -104,6 +104,9 @@ class AgentOutput(BaseModel):
     routing_reason: str | None = None
     #: Next eligible models after this pick (fallback order), as ``provider:model`` ids.
     routing_alternatives: tuple[str, ...] = ()
+    #: When this attempt succeeded (or failed) after another provider/model failed first.
+    fallback_from_provider: str | None = None
+    fallback_from_model: str | None = None
     usage: TokenUsage = TokenUsage()
     cost_usd: float = Field(default=0.0, ge=0.0)
     latency_ms: float = Field(default=0.0, ge=0.0)
