@@ -30,9 +30,9 @@ const NAV: {
   icon: typeof Sparkles;
   ambient: "threads" | "dots" | "veil" | "static";
 }[] = [
-  { id: "home", label: "Command", testId: "tab-command", icon: Sparkles, ambient: "threads" },
-  { id: "agents", label: "Agents", testId: "tab-agents", icon: Bot, ambient: "dots" },
-  { id: "build", label: "Build", testId: "tab-build", icon: Hammer, ambient: "dots" },
+  { id: "home", label: "Command", testId: "tab-command", icon: Sparkles, ambient: "static" },
+  { id: "agents", label: "Agents", testId: "tab-agents", icon: Bot, ambient: "static" },
+  { id: "build", label: "Build", testId: "tab-build", icon: Hammer, ambient: "static" },
   { id: "work", label: "Work", testId: "tab-work", icon: Workflow, ambient: "static" },
   { id: "messages", label: "Messages", testId: "tab-activity", icon: MessageSquare, ambient: "static" },
   { id: "settings", label: "Settings", testId: "tab-settings", icon: Settings, ambient: "static" },

@@ -2,17 +2,12 @@
 
 import type { CSSProperties, ReactNode } from "react";
 
-import { BRAND_GRADIENT } from "@/lib/brand";
-import { usePrefersReducedMotion } from "@/components/visuals/hooks/useVisualBudget";
-
 /**
- * Lightweight brand gradient heading — React Bits GradientText aesthetic without
- * a continuous rAF loop. Prefer this for Command / hero titles.
+ * Brand emphasis for titles — solid high-contrast text (no blur, no transparent clip).
  */
 export function BrandGradientText({
   children,
   className = "",
-  colors = BRAND_GRADIENT,
   style,
 }: {
   children: ReactNode;
@@ -20,21 +15,8 @@ export function BrandGradientText({
   colors?: readonly string[];
   style?: CSSProperties;
 }) {
-  const reduced = usePrefersReducedMotion();
-  const stops = colors.join(", ");
-
   return (
-    <span
-      className={`brand-gradient-text ${reduced ? "is-static" : ""} ${className}`.trim()}
-      style={
-        {
-          ...style,
-          // Fallback solid color if background-clip is unsupported in a capture/browser.
-          color: "var(--text)",
-          backgroundImage: `linear-gradient(105deg, ${stops})`,
-        } as CSSProperties
-      }
-    >
+    <span className={`brand-gradient-text ${className}`.trim()} style={style}>
       {children}
     </span>
   );

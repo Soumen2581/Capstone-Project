@@ -11,9 +11,9 @@
   --surface-3: #22284f;
   --border: rgba(230, 230, 250, 0.1);
   --border-strong: rgba(230, 230, 250, 0.18);
-  --text: #f0f1f8;
-  --text-muted: #b4b8d0;
-  --text-dim: #7d84a3;
+  --text: #f4f5fb;
+  --text-muted: #c8cce0;
+  --text-dim: #9aa1bf;
   --accent: #5b7cfa;
   --accent-2: #32dca0;
   --accent-soft: rgba(91, 124, 250, 0.14);
@@ -164,6 +164,43 @@ button:disabled {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Never blur application copy — keep every label/body sharp. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+a,
+button,
+label,
+li,
+td,
+th,
+summary,
+pre,
+code,
+input,
+textarea,
+select,
+.muted,
+.meta,
+.brand,
+.tagline,
+.panel-title,
+.mkt-display,
+.mkt-lede,
+.mkt-title,
+.mkt-body,
+.chat-body,
+.answer {
+  filter: none !important;
+  text-shadow: none;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* ========== Marketing ========== */
@@ -388,43 +425,20 @@ button:disabled {
   font-size: 1.45rem;
   font-weight: 650;
   letter-spacing: -0.03em;
-  background-size: 180% 180%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  /* Keep a readable fill; clip paints over it when supported. */
-  color: var(--text);
-}
-
-@supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  .composer-gradient,
-  .brand-gradient-text {
-    color: transparent;
-  }
-}
-
-.brand-gradient-text:not(.is-static) {
-  animation: brand-gradient-shift 14s ease-in-out infinite alternate;
+  /* Solid readable brand color — never transparent / never blurred. */
+  color: #9db0ff;
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  filter: none !important;
+  animation: none !important;
 }
 
 .mkt-brand-hero .brand-gradient-text {
   font-size: inherit;
   font-weight: inherit;
   letter-spacing: inherit;
-}
-
-@keyframes brand-gradient-shift {
-  from {
-    background-position: 0% 50%;
-  }
-  to {
-    background-position: 100% 50%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .brand-gradient-text {
-    animation: none !important;
-  }
+  color: var(--text);
 }
 
 @media (hover: none) {

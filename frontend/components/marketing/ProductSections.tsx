@@ -2,23 +2,14 @@
 
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
 
 import { WORKFLOW_STEPS } from "@/lib/design/agents";
 import { AgentNetwork } from "@/components/marketing/AgentNetwork";
 
-function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
-  const reduce = useReducedMotion();
-  return (
-    <motion.div
-      initial={reduce ? false : { opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-10%" }}
-      transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}
-    >
-      {children}
-    </motion.div>
-  );
+function Reveal({ children }: { children: ReactNode; delay?: number }) {
+  // Always render opaque — no fade/blur that can leave copy unreadable.
+  return <div>{children}</div>;
 }
 
 export function WorkflowSection() {
