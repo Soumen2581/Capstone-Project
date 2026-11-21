@@ -29,6 +29,8 @@ export function BrandGradientText({
       style={
         {
           ...style,
+          // Fallback solid color if background-clip is unsupported in a capture/browser.
+          color: "var(--text)",
           backgroundImage: `linear-gradient(105deg, ${stops})`,
         } as CSSProperties
       }
