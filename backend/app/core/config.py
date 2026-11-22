@@ -128,8 +128,9 @@ class Settings(BaseSettings):
     # Required in production. Development falls back to a derived key (see service).
     encryption_key: SecretStr | None = None
 
-    # HS256 secret for validating Authorization: Bearer JWTs (``sub`` = operator id).
-    # Required in production. Dev/UI can rely on X-Operator-Id without a JWT.
+    # HS256 secret for Authorization: Bearer JWTs (``sub`` = operator id).
+    # Required in production. Development derives a stable fallback when unset
+    # (see identity._secret) so local signup/login works after copying .env.example.
     jwt_secret: SecretStr | None = None
     jwt_audience: str | None = None
     jwt_issuer: str | None = None

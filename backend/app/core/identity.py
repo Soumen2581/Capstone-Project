@@ -7,6 +7,7 @@ tokens are no longer accepted.
 
 from __future__ import annotations
 
+import hashlib
 import re
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
@@ -47,12 +48,22 @@ def validate_operator_id(value: str) -> str:
 
 
 def _secret(settings: Settings) -> str:
+    """HS256 signing key. Production requires ``JWT_SECRET``; local/dev derives a stable fallback."""
     raw = settings.jwt_secret
     if raw is None:
+        value = ""
+    elif isinstance(raw, str):
+        value = raw
+    else:
+        value = raw.get_secret_value()
+    value = value.strip()
+    if value:
+        return value
+    if settings.is_production:
         return ""
-    if isinstance(raw, str):
-        return raw
-    return raw.get_secret_value()
+    # Stable across restarts for the same database so local signup sessions keep working
+    # when someone copies .env.example and leaves JWT_SECRET blank.
+    return hashlib.sha256(f"dev-only-jwt::{settings.database_url}".encode()).hexdigest()
 
 
 def operator_id_from_jwt(token: str, settings: Settings) -> str:

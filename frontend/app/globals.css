@@ -1853,10 +1853,6 @@ html.mkt-fluid .mkt-footer {
   grid-template-columns: 52px minmax(0, 1fr);
 }
 
-.desktop-nav-toggle {
-  display: grid;
-}
-
 .chat-sidebar {
   display: flex;
   flex-direction: column;
@@ -3130,10 +3126,6 @@ html.mkt-fluid .mkt-footer {
   }
 
   .app-sidebar {
-    display: none;
-  }
-
-  .desktop-nav-toggle {
     display: none;
   }
 

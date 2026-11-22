@@ -3,7 +3,6 @@
 import {
   Bot,
   Hammer,
-  LayoutDashboard,
   Menu,
   MessageSquare,
   PanelLeftClose,
@@ -106,16 +105,6 @@ export function AppShell({
             >
               {mobileOpen ? <X size={16} /> : <Menu size={16} />}
             </button>
-            <button
-              type="button"
-              className="sidebar-toggle desktop-nav-toggle"
-              aria-label={collapsed ? "Expand navigation" : "Minimize navigation"}
-              title={collapsed ? "Expand navigation" : "Minimize navigation"}
-              onClick={() => setCollapsed((value) => !value)}
-            >
-              {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
-            </button>
-            <LayoutDashboard size={16} aria-hidden className="app-nav-icon" />
             <div className="brand-block">
               <h1 className="brand" data-testid="brand">
                 {active.label}
