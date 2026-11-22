@@ -31,7 +31,8 @@ export default function MarketingPage() {
         </main>
         <MarketingFooter />
         <div className="mkt-skip-office">
-          <Link href="/login">Open workspace</Link>
+          <Link href="/signup">Sign up</Link>
+          <Link href="/login">Log in</Link>
         </div>
       </div>
     </MarketingFluidScroll>

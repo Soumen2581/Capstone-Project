@@ -54,12 +54,12 @@ export function HeroSection() {
             blur={0}
           >
             <div className="mkt-hero-cta">
-              <Link href="/login" className="mkt-btn mkt-btn-primary mkt-btn-lg">
-                Open workspace
+              <Link href="/signup" className="mkt-btn mkt-btn-primary mkt-btn-lg">
+                Sign up
               </Link>
-              <a href="#how-it-works" className="mkt-text-link">
-                See how it works
-              </a>
+              <Link href="/login" className="mkt-btn mkt-btn-ghost mkt-btn-lg">
+                Log in
+              </Link>
             </div>
           </AnimatedContent>
         </div>

@@ -1,7 +1,7 @@
 # Agent Mesh
 
 <div align="center">
-  <img width="320" alt="Agent Mesh" src="https://github.com/Soumen2581/Capstone-Project/raw/master/frontend/public/brand/agent-mesh-logo.png" />
+  <img width="320" alt="Agent Mesh" src="https://github.com/Soumen2581/Capstone-Project/raw/master/frontend/public/brand/agent-mesh-logo-wiki.png" />
   <br/><br/>
   <b>From one brief to a coordinated specialist team — select, route, execute, synthesise.</b><br/>
   <i>AI-assisted multi-agent orchestration with explainable workflows and shareable results.</i><br/>

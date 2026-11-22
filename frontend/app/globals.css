@@ -1053,6 +1053,9 @@ html.mkt-fluid .mkt-footer {
 .mkt-skip-office {
   position: absolute;
   left: -9999px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .mkt-skip-office:focus-within {

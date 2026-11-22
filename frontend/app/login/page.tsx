@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
 
 import { BrandLogo } from "@/components/BrandLogo";
@@ -18,6 +18,8 @@ const GOOGLE_CLIENT_ID = (process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "").trim()
 
 export default function LoginPage() {
   const router = useRouter();
+  const pathname = usePathname();
+  const isSignup = pathname === "/signup";
   const buttonRef = useRef<HTMLDivElement>(null);
   const [operator, setOperator] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -64,6 +66,7 @@ export default function LoginPage() {
           theme: "filled_black",
           size: "large",
           width: 320,
+          text: isSignup ? "signup_with" : "signin_with",
         });
         setGoogleReady(true);
       } catch (cause) {
@@ -78,7 +81,7 @@ export default function LoginPage() {
       cancelled = true;
       script.remove();
     };
-  }, [router]);
+  }, [router, isSignup]);
 
   const continueAsOperator = (event: FormEvent) => {
     event.preventDefault();
@@ -90,11 +93,15 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="login-shell" data-testid="login-page">
+    <main className="login-shell" data-testid={isSignup ? "signup-page" : "login-page"}>
       <section className="login-card">
         <BrandLogo size={48} variant="mark" />
-        <h1>{BRAND_NAME}</h1>
-        <p className="login-tagline">{BRAND_TAGLINE}</p>
+        <h1>{isSignup ? "Create your workspace" : BRAND_NAME}</h1>
+        <p className="login-tagline">
+          {isSignup
+            ? "Register with Google, or pick a workspace name to get started."
+            : BRAND_TAGLINE}
+        </p>
 
         <form onSubmit={continueAsOperator} className="stack-gap">
           <label className="field">
@@ -109,7 +116,9 @@ export default function LoginPage() {
             />
           </label>
           <p className="meta" style={{ margin: 0 }}>
-            Enter a name to continue, or sign in with Google below.
+            {isSignup
+              ? "Choose a name for local access, or continue with Google to register."
+              : "Enter a name to continue, or sign in with Google below."}
           </p>
           {error && (
             <p className="banner-err" role="alert">
@@ -117,7 +126,7 @@ export default function LoginPage() {
             </p>
           )}
           <button type="submit" className="px-btn primary" disabled={busy} data-testid="login-continue">
-            Continue to workspace
+            {isSignup ? "Create workspace" : "Continue to workspace"}
           </button>
         </form>
 
@@ -128,16 +137,26 @@ export default function LoginPage() {
         {GOOGLE_CLIENT_ID ? (
           <div className="login-google">
             <div ref={buttonRef} data-testid="google-signin" />
-            {busy && <p className="meta">Signing in…</p>}
+            {busy && <p className="meta">{isSignup ? "Creating account…" : "Signing in…"}</p>}
             {!googleReady && <p className="meta">Loading Google button…</p>}
           </div>
         ) : (
           <p className="meta" data-testid="login-google-hint">
-            Google sign-in is optional. Use local operator login above.
+            Google sign-in is optional. Use a workspace name above.
           </p>
         )}
 
         <p className="meta" style={{ marginTop: 16 }}>
+          {isSignup ? (
+            <>
+              Already registered? <Link href="/login">Log in</Link>
+            </>
+          ) : (
+            <>
+              New here? <Link href="/signup">Sign up</Link>
+            </>
+          )}
+          {" · "}
           <Link href="/">Back to product site</Link>
         </p>
       </section>
