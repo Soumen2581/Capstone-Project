@@ -17,7 +17,6 @@ from __future__ import annotations
 from app.domain.enums import Capability, ModelTrait
 from app.schemas.agent import AgentDefinition, AgentLimits, ModelPreference, RetryPolicy
 
-
 # Reusable JSON Schema fragments. Every output schema is an object so downstream input
 # can be built from named fields.
 _STRING_ARRAY = {"type": "array", "items": {"type": "string"}}
@@ -108,7 +107,6 @@ PLANNING_AGENT = AgentDefinition(
             },
         },
     ),
-
     output_schema={
         "type": "object",
         "required": ["steps"],
@@ -151,6 +149,10 @@ RESEARCH_AGENT = AgentDefinition(
     ),
     instructions=(
         "You are a research agent. Answer the objective carefully.\n"
+        "- Put the direct user-facing answer in `answer` (complete prose the operator "
+        "should read). Use `summary` as a one-line label only.\n"
+        "- For who holds office now or other current facts, state the present holder "
+        "and as-of timing; never present a past holder as current.\n"
         "- Separate established facts from inference; attribute claims when you can.\n"
         "- Do not invent customers, revenue, acquisitions, partnerships, or product "
         "details. If something is rumoured or unknown, label it as such or omit it.\n"
@@ -171,11 +173,14 @@ RESEARCH_AGENT = AgentDefinition(
             },
         },
     ),
-
     output_schema={
         "type": "object",
         "required": ["findings"],
         "properties": {
+            "answer": {
+                "type": "string",
+                "description": "Full prose answer the operator should read.",
+            },
             "findings": {"type": "array", "items": {"type": "string"}},
             "summary": {"type": "string"},
             "sources": {
@@ -193,6 +198,8 @@ RESEARCH_AGENT = AgentDefinition(
         },
     },
     model_preference=ModelPreference(
+        # Prefer Perplexity Sonar when configured so current-fact asks are search-grounded.
+        preferred_provider="perplexity",
         preferred_traits=(ModelTrait.LONG_CONTEXT, ModelTrait.FAST),
         min_context_tokens=32_000,
     ),
@@ -239,7 +246,6 @@ SECURITY_AGENT = AgentDefinition(
             "language": {"type": "string"},
         },
     ),
-
     output_schema={
         "type": "object",
         "required": ["findings"],
@@ -315,7 +321,6 @@ CODING_AGENT = AgentDefinition(
             "framework": {"type": "string"},
         },
     ),
-
     output_schema={
         "type": "object",
         "required": ["changes", "summary"],
@@ -388,7 +393,6 @@ TESTING_AGENT = AgentDefinition(
             "focus": {"type": "string"},
         },
     ),
-
     output_schema={
         "type": "object",
         "required": ["passed"],
@@ -457,7 +461,6 @@ REVIEW_AGENT = AgentDefinition(
             },
         },
     ),
-
     output_schema={
         "type": "object",
         "required": ["approved"],
@@ -511,7 +514,6 @@ DOCUMENTATION_AGENT = AgentDefinition(
             "audience": {"type": "string"},
         },
     ),
-
     output_schema={
         "type": "object",
         "required": ["document"],
@@ -561,7 +563,6 @@ DATA_CLEANER_AGENT = AgentDefinition(
             "format": {"type": "string", "enum": ["csv", "json", "tsv"]},
         },
     ),
-
     output_schema={
         "type": "object",
         "required": ["summary", "cleaned_data", "change_summary"],
@@ -615,7 +616,6 @@ DATA_ANALYST_AGENT = AgentDefinition(
             },
         },
     ),
-
     output_schema={
         "type": "object",
         "required": ["summary", "analysis", "insights"],
@@ -680,7 +680,6 @@ GENERAL_AGENT = AgentDefinition(
             "format": {"type": "string"},
         },
     ),
-
     output_schema={
         "type": "object",
         "required": ["summary", "answer"],

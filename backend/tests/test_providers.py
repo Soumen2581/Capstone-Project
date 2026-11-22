@@ -460,6 +460,7 @@ def test_production_never_registers_the_demo_provider() -> None:
     registry = build_provider_registry(
         settings_with(
             environment="production",
+            debug=False,
             seed_agents_on_startup=False,
             encryption_key="prod-test-encryption-key-value",
             jwt_secret="prod-test-jwt-secret-value",

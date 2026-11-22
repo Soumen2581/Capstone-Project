@@ -105,6 +105,18 @@ _SIGNALS: dict[Capability, tuple[str, ...]] = {
         "compare",
         "what is the latest",
         "best practice",
+        # Current-fact / office-holder questions need live research, not parametric recall.
+        "who is",
+        "who's",
+        "who was",
+        "current ",
+        "right now",
+        "as of today",
+        "president",
+        "prime minister",
+        "head of state",
+        "ceo of",
+        "latest news",
     ),
     Capability.SUMMARISATION: ("summar", "tl;dr", "brief overview", "condense"),
     Capability.CODE_REVIEW: ("review", "code quality", "critique", "assess the code"),
@@ -313,6 +325,9 @@ class LLMCapabilityAnalyser:
             "that fully satisfies it: every capability you name causes an AI agent to "
             "run, which costs the user time and money.\n\n"
             f"Choose only from this list:\n{vocabulary}\n\n"
+            "Include research.web when the user asks who currently holds an office, "
+            "what is true right now, or for latest/news-style facts that change over "
+            "time. Prefer task.general only for evergreen explanations.\n\n"
             'Respond with JSON: {"capabilities": ["..."], "reasoning": "..."}. '
             "Do not invent capabilities that are not listed."
         )

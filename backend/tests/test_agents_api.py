@@ -44,7 +44,10 @@ async def test_builtin_agents_are_model_agnostic(db_client: AsyncClient) -> None
     assert by_id["security-agent"]["name"] == "Security Agent"
     assert by_id["security-agent"]["model_strategy"] == "auto"
     assert by_id["security-agent"]["preferred_model"] is None
-    assert by_id["research-agent"]["preferred_provider"] is None
+    # Soft provider hint for search-grounded models; still Auto (no Fixed model pin).
+    assert by_id["research-agent"]["preferred_provider"] == "perplexity"
+    assert by_id["research-agent"]["preferred_model"] is None
+    assert by_id["research-agent"]["model_strategy"] == "auto"
     assert by_id["documentation-agent"]["preferred_model"] is None
     assert by_id["general-agent"]["name"] == "General Agent"
     assert by_id["review-agent"]["name"] == "Review Agent"

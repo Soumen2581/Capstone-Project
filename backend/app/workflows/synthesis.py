@@ -118,6 +118,7 @@ def _prose_answers(plan: WorkflowPlan, outputs: dict[str, AgentOutput]) -> str |
     preferred = (
         "documentation-agent",
         "general-agent",
+        "research-agent",
         "data-analyst-agent",
         "planning-agent",
     )
@@ -182,7 +183,11 @@ def _deliverable(payload: dict[str, object]) -> str:
     if isinstance(findings, list) and findings:
         lines = [str(item) for item in findings if str(item).strip()]
         if lines:
-            return "\n".join(f"- {line}" for line in lines)
+            bullets = "\n".join(f"- {line}" for line in lines)
+            summary = payload.get("summary")
+            if isinstance(summary, str) and summary.strip() and len(summary.strip()) > 80:
+                return summary.strip() + "\n\n" + bullets
+            return bullets
 
     return _short_label(payload)
 

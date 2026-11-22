@@ -9,6 +9,7 @@ from __future__ import annotations
 import asyncio
 import time
 
+import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -266,8 +267,8 @@ async def test_sibling_costs_are_all_counted(seeded_session: AsyncSession) -> No
     await seeded_session.commit()
 
     per_node = sum(output.cost_usd for output in run.outputs.values())
-    assert run.total_cost_usd == per_node
-    assert await repository.workflow_cost(run.workflow_id) == per_node
+    assert run.total_cost_usd == pytest.approx(per_node)
+    assert await repository.workflow_cost(run.workflow_id) == pytest.approx(per_node)
 
 
 # ---------------------------------------------------------------------------

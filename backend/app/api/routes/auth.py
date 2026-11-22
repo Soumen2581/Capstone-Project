@@ -1,17 +1,19 @@
-"""Google sign-in, session cookies, and account deletion.
+"""Sign-in, registration, session cookies, and account deletion.
 
-The browser sends a Google ID token. This route verifies it, upserts the user by
-``sub`` (never by email alone), and issues our own session JWT. A matching email on a
-different Google subject is rejected so accounts cannot be linked automatically.
+Google ID tokens and email/password accounts both land in ``users`` and receive the
+same session JWT. Email is unique: a Google account and a password account cannot share
+one address.
 """
 
 from __future__ import annotations
 
+import re
+import uuid
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, HTTPException, Request, Response, status
-from pydantic import BaseModel, Field
-from sqlalchemy import delete, select
+from pydantic import BaseModel, Field, field_validator
+from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import OperatorDep, SessionDep, SettingsDep
@@ -24,15 +26,54 @@ from app.core.identity import (
     read_session_token,
     session_token_from_request,
 )
+from app.core.passwords import hash_password, verify_password
 from app.models.network import ArtifactRecord, MemoryRecord
 from app.models.user import UserRecord
 from app.services.file_generation import artifact_path
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
+_EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+
+def _normalise_email(value: str) -> str:
+    cleaned = value.strip().lower()
+    if not _EMAIL_RE.fullmatch(cleaned) or len(cleaned) > 320:
+        raise ValueError("enter a valid email address")
+    return cleaned
+
 
 class GoogleLoginRequest(BaseModel):
     id_token: str = Field(min_length=20, max_length=8_000)
+
+
+class RegisterRequest(BaseModel):
+    email: str = Field(min_length=3, max_length=320)
+    password: str = Field(min_length=8, max_length=128)
+    display_name: str | None = Field(default=None, max_length=240)
+
+    @field_validator("email")
+    @classmethod
+    def _email(cls, value: str) -> str:
+        return _normalise_email(value)
+
+    @field_validator("display_name")
+    @classmethod
+    def _clean_name(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        cleaned = value.strip()
+        return cleaned or None
+
+
+class PasswordLoginRequest(BaseModel):
+    email: str = Field(min_length=3, max_length=320)
+    password: str = Field(min_length=1, max_length=128)
+
+    @field_validator("email")
+    @classmethod
+    def _email(cls, value: str) -> str:
+        return _normalise_email(value)
 
 
 class UserView(BaseModel):
@@ -66,6 +107,14 @@ def _set_session_cookie(response: Response, settings: SettingsDep, token: str) -
         max_age=settings.session_ttl_hours * 3600,
         path="/",
     )
+
+
+def _issue_login(response: Response, settings: SettingsDep, user: UserRecord) -> LoginResponse:
+    token = issue_session_token(
+        settings, sub=user.google_sub, version=user.session_version, email=user.email
+    )
+    _set_session_cookie(response, settings, token)
+    return LoginResponse(user=_view(user), session_token=token)
 
 
 async def operator_from_session(
@@ -116,7 +165,7 @@ async def login_with_google(
     if existing_email is not None and existing_email.google_sub != identity.sub:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="this email is already registered to a different Google account",
+            detail="this email is already registered",
         )
 
     user = await session.get(UserRecord, identity.sub)
@@ -139,19 +188,73 @@ async def login_with_google(
         user.picture_url = identity.picture
         user.last_login_at = now
     await session.flush()
+    return _issue_login(response, settings, user)
 
-    token = issue_session_token(
-        settings, sub=user.google_sub, version=user.session_version, email=user.email
+
+@router.post("/register", response_model=LoginResponse, status_code=status.HTTP_201_CREATED)
+async def register_with_password(
+    body: RegisterRequest,
+    response: Response,
+    settings: SettingsDep,
+    session: SessionDep,
+) -> LoginResponse:
+    """Create a durable email/password account and issue a session."""
+    existing = await session.scalar(
+        select(UserRecord).where(func.lower(UserRecord.email) == body.email)
     )
-    _set_session_cookie(response, settings, token)
-    return LoginResponse(user=_view(user), session_token=token)
+    if existing is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="an account with this email already exists",
+        )
+
+    subject = f"local:{uuid.uuid4().hex}"
+    now = datetime.now(UTC)
+    user = UserRecord(
+        google_sub=subject,
+        email=body.email,
+        email_verified=False,
+        display_name=body.display_name,
+        picture_url=None,
+        password_hash=hash_password(body.password),
+        session_version=1,
+        last_login_at=now,
+    )
+    session.add(user)
+    await session.flush()
+    return _issue_login(response, settings, user)
+
+
+@router.post("/login", response_model=LoginResponse)
+async def login_with_password(
+    body: PasswordLoginRequest,
+    response: Response,
+    settings: SettingsDep,
+    session: SessionDep,
+) -> LoginResponse:
+    """Authenticate an email/password account and issue a session."""
+    user = await session.scalar(
+        select(UserRecord).where(func.lower(UserRecord.email) == body.email)
+    )
+    if (
+        user is None
+        or not user.password_hash
+        or not verify_password(body.password, user.password_hash)
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="invalid email or password",
+        )
+    user.last_login_at = datetime.now(UTC)
+    await session.flush()
+    return _issue_login(response, settings, user)
 
 
 @router.get("/me", response_model=UserView)
 async def current_user(operator: OperatorDep, session: SessionDep) -> UserView:
     user = await session.get(UserRecord, operator.id)
     if user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="sign in with Google")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="sign in required")
     return _view(user)
 
 

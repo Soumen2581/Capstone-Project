@@ -107,6 +107,13 @@ async def test_general_question_stays_on_general_desk() -> None:
     assert Capability.CODE_GENERATION not in result.required
 
 
+async def test_current_office_holder_routes_to_web_research() -> None:
+    result = await analyse("president of usa")
+
+    assert Capability.WEB_RESEARCH in result.required
+    assert Capability.GENERAL_ASSISTANCE not in result.required
+
+
 async def test_analysis_explains_itself() -> None:
     result = await analyse("Find security vulnerabilities in this code")
 

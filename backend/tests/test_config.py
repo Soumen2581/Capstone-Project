@@ -54,6 +54,7 @@ def test_settings_load_from_environment_like_production(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setenv("ENVIRONMENT", "production")
+    monkeypatch.setenv("DEBUG", "false")
     monkeypatch.setenv("LOG_FORMAT", "json")
     monkeypatch.setenv("REDIS_URL", "redis://redis:6379/0")
     monkeypatch.setenv("AUTH_MODE", "header")

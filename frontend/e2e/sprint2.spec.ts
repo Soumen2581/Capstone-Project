@@ -48,9 +48,12 @@ test.describe("Sprint 2 office surfaces", () => {
     );
   });
 
-  test("login page loads with operator continue path", async ({ page }) => {
+  test("login page loads with email sign-in and local workspace option", async ({ page }) => {
     await page.goto("/login");
     await expect(page.getByTestId("login-page")).toBeVisible();
+    await expect(page.getByTestId("login-email")).toBeVisible();
+    await expect(page.getByTestId("login-password")).toBeVisible();
+    await page.getByRole("button", { name: /local workspace/i }).click();
     await expect(page.getByTestId("login-operator")).toBeVisible();
     await expect(page.getByTestId("login-continue")).toBeVisible();
   });

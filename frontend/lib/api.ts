@@ -164,6 +164,37 @@ export async function loginWithGoogle(idToken: string): Promise<SignedInUser> {
   return result.user;
 }
 
+export async function registerWithPassword(input: {
+  email: string;
+  password: string;
+  display_name?: string;
+}): Promise<SignedInUser> {
+  const result = await request<{ user: SignedInUser; session_token: string }>(
+    "/api/v1/auth/register",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
+  setSessionToken(result.session_token);
+  return result.user;
+}
+
+export async function loginWithPassword(input: {
+  email: string;
+  password: string;
+}): Promise<SignedInUser> {
+  const result = await request<{ user: SignedInUser; session_token: string }>(
+    "/api/v1/auth/login",
+    {
+      method: "POST",
+      body: JSON.stringify(input),
+    },
+  );
+  setSessionToken(result.session_token);
+  return result.user;
+}
+
 export async function logoutSession(): Promise<void> {
   try {
     await request<void>("/api/v1/auth/logout", { method: "POST" });

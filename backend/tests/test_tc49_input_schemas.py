@@ -25,7 +25,9 @@ async def test_every_builtin_agent_schema_endpoint_returns_both_contracts(
         assert body["agent_id"] == agent.id
         assert body["input_schema"].get("type") == "object", agent.id
         assert "objective" in body["input_schema"].get("properties", {}), agent.id
-        assert body["input_schema"].get("properties", {}).get("objective", {}).get("type") == "string"
+        assert (
+            body["input_schema"].get("properties", {}).get("objective", {}).get("type") == "string"
+        )
         assert body["output_schema"].get("type") == "object", agent.id
         assert body["output_schema"].get("properties"), agent.id
 
@@ -36,14 +38,16 @@ def test_every_builtin_declares_a_non_empty_input_schema() -> None:
         schema = agent.input_schema
         assert schema.get("type") == "object", agent.id
         props = schema.get("properties") or {}
+        assert isinstance(props, dict)
         assert "objective" in props, agent.id
         assert "parameters" in props, agent.id
         assert "upstream" in props, agent.id
-        assert schema.get("required") and "objective" in schema["required"], agent.id
+        required = schema.get("required")
+        assert isinstance(required, list) and "objective" in required, agent.id
 
 
 def test_valid_minimal_input_passes_for_every_builtin() -> None:
-    document = {
+    document: dict[str, object] = {
         "objective": "Do the work",
         "parameters": {},
         "upstream": [],
@@ -56,7 +60,7 @@ def test_valid_minimal_input_passes_for_every_builtin() -> None:
 
 
 def test_empty_objective_is_rejected_for_every_builtin() -> None:
-    document = {
+    document: dict[str, object] = {
         "objective": "",
         "parameters": {},
         "upstream": [],
@@ -71,7 +75,7 @@ def test_empty_objective_is_rejected_for_every_builtin() -> None:
 
 def test_malformed_upstream_item_is_rejected() -> None:
     agent = next(a for a in BUILTIN_AGENTS if a.id == "coding-agent")
-    document = {
+    document: dict[str, object] = {
         "objective": "Fix the bug",
         "parameters": {},
         "upstream": [{"node_key": "n1"}],  # missing agent_id + payload
