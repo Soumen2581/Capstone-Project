@@ -123,7 +123,7 @@ function OfficeWorkspace() {
   const [advancedDrawer, setAdvancedDrawer] = useState(false);
   const [showMsgDev, setShowMsgDev] = useState(false);
   const [conversations, setConversations] = useState<WorkflowView[]>([]);
-  const [composerMode, setComposerMode] = useState<"new" | "followup">("new");
+  const [, setComposerMode] = useState<"new" | "followup">("new");
   // Level 3: design a bespoke team of specialists for the request instead of routing to
   // the fixed roster. Runs synchronously and is standalone (not part of a chat thread).
   const [generative, setGenerative] = useState(false);
