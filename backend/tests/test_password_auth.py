@@ -2,9 +2,21 @@
 
 from __future__ import annotations
 
-from httpx import AsyncClient
+from collections.abc import AsyncIterator
 
+import pytest
+from httpx import ASGITransport, AsyncClient
+from pydantic import SecretStr
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+
+from app.agents.builtin import BUILTIN_AGENTS
+from app.agents.seed import seed_agents
+from app.api.dependencies import get_session
+from app.core.config import Settings
 from app.core.passwords import hash_password, verify_password
+from app.main import create_app
+from app.providers.fake import FakeProvider
+from app.providers.registry import ProviderRegistry
 
 
 def test_password_hash_round_trip() -> None:
@@ -14,8 +26,43 @@ def test_password_hash_round_trip() -> None:
     assert not verify_password("wrong-password", stored)
 
 
-async def test_register_persists_user_and_login_works(db_client: AsyncClient) -> None:
-    register = await db_client.post(
+@pytest.fixture
+def password_auth_settings(settings: Settings) -> Settings:
+    return settings.model_copy(
+        update={
+            "auth_mode": "header",
+            "jwt_secret": SecretStr("password-auth-test-jwt-secret"),
+        }
+    )
+
+
+@pytest.fixture
+async def password_auth_client(
+    password_auth_settings: Settings,
+    session_factory: async_sessionmaker[AsyncSession],
+    fake_provider: FakeProvider,
+) -> AsyncIterator[AsyncClient]:
+    app = create_app(password_auth_settings)
+    app.state.session_factory = session_factory
+    app.state.provider_registry = ProviderRegistry([fake_provider])
+
+    async with session_factory() as session:
+        await seed_agents(session, BUILTIN_AGENTS)
+        await session.commit()
+
+    async def override_session() -> AsyncIterator[AsyncSession]:
+        async with session_factory() as request_session:
+            yield request_session
+            await request_session.commit()
+
+    app.dependency_overrides[get_session] = override_session
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        yield client
+
+
+async def test_register_persists_user_and_login_works(password_auth_client: AsyncClient) -> None:
+    register = await password_auth_client.post(
         "/api/v1/auth/register",
         json={
             "email": "New.User@Example.com",
@@ -30,28 +77,26 @@ async def test_register_persists_user_and_login_works(db_client: AsyncClient) ->
     assert body["user"]["id"].startswith("local:")
     assert body["session_token"]
 
-    me = await db_client.get(
+    me = await password_auth_client.get(
         "/api/v1/auth/me",
         headers={"Authorization": f"Bearer {body['session_token']}"},
     )
-    # /me requires auth_mode that accepts session; header mode may still resolve JWT sub.
-    assert me.status_code in {200, 401}
-    if me.status_code == 200:
-        assert me.json()["email"] == "new.user@example.com"
+    assert me.status_code == 200
+    assert me.json()["email"] == "new.user@example.com"
 
-    duplicate = await db_client.post(
+    duplicate = await password_auth_client.post(
         "/api/v1/auth/register",
         json={"email": "new.user@example.com", "password": "securepass1"},
     )
     assert duplicate.status_code == 409
 
-    bad = await db_client.post(
+    bad = await password_auth_client.post(
         "/api/v1/auth/login",
         json={"email": "new.user@example.com", "password": "wrong-password"},
     )
     assert bad.status_code == 401
 
-    ok = await db_client.post(
+    ok = await password_auth_client.post(
         "/api/v1/auth/login",
         json={"email": "New.User@Example.com", "password": "securepass1"},
     )
@@ -60,8 +105,8 @@ async def test_register_persists_user_and_login_works(db_client: AsyncClient) ->
     assert ok.json()["session_token"]
 
 
-async def test_register_rejects_short_password(db_client: AsyncClient) -> None:
-    response = await db_client.post(
+async def test_register_rejects_short_password(password_auth_client: AsyncClient) -> None:
+    response = await password_auth_client.post(
         "/api/v1/auth/register",
         json={"email": "short@example.com", "password": "tiny"},
     )
