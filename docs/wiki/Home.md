@@ -134,8 +134,6 @@ Improved **consistency**, **scalability**, and reduced **wasted spend** through 
   <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/08-login.png" alt="Sign in" width="900" />
 </p>
 
-More captures: [`docs/images/`](https://github.com/Soumen2581/Capstone-Project/tree/master/docs/images)
-
 ## Project Design
 
 ### High-level architecture

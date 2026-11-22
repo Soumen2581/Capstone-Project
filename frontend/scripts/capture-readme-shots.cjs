@@ -55,6 +55,18 @@ async function main() {
   const client = await CDP({ port: PORT });
   const { Page, Runtime, Emulation, Network } = client;
   await Promise.all([Page.enable(), Runtime.enable(), Network.enable()]);
+  await Page.addScriptToEvaluateOnNewDocument({
+    source: `(() => {
+      try {
+        localStorage.setItem('agent-mesh-theme', 'dark');
+        localStorage.setItem('agent-mesh-workspace-auth', '1');
+        localStorage.setItem('agentorch.operatorId', 'operator');
+        document.documentElement.dataset.theme = 'dark';
+        document.documentElement.dataset.themePreference = 'dark';
+        document.documentElement.style.colorScheme = 'dark';
+      } catch (e) {}
+    })()`,
+  });
   await Emulation.setDeviceMetricsOverride({
     width: 1440,
     height: 920,
@@ -77,10 +89,12 @@ async function main() {
           document.head.appendChild(s);
         }
         try {
-          localStorage.setItem('agent-mesh-theme', 'light');
-          document.documentElement.dataset.theme = 'light';
-          document.documentElement.dataset.themePreference = 'light';
-          document.documentElement.style.colorScheme = 'light';
+          localStorage.setItem('agent-mesh-theme', 'dark');
+          localStorage.setItem('agent-mesh-workspace-auth', '1');
+          localStorage.setItem('agentorch.operatorId', 'operator');
+          document.documentElement.dataset.theme = 'dark';
+          document.documentElement.dataset.themePreference = 'dark';
+          document.documentElement.style.colorScheme = 'dark';
         } catch (e) {}
         return true;
       })()`,
@@ -159,7 +173,6 @@ async function main() {
   await shotClip("01-hero.png", await heroClip());
   for (const [sel, file] of [
     ["#agents", "02-agents-roster.png"],
-    ["#how-it-works", "03-workflow-steps.png"],
     ["#communication", "04-agent-mesh.png"],
     ["#workspace", "05-one-workspace.png"],
   ]) {
@@ -208,6 +221,31 @@ async function main() {
   });
   fs.writeFileSync(path.join(OUT, "07-settings-providers.png"), Buffer.from(settingsData, "base64"));
   console.log("ok 07-settings-providers.png");
+
+  // Login (no workspace auth) — dark card on dark ground
+  await Emulation.setDeviceMetricsOverride({
+    width: 1440,
+    height: 920,
+    deviceScaleFactor: 2,
+    mobile: false,
+  });
+  await Runtime.evaluate({
+    expression: `(() => {
+      try {
+        localStorage.removeItem('agent-mesh-workspace-auth');
+        localStorage.setItem('agent-mesh-theme', 'dark');
+      } catch (e) {}
+      return true;
+    })()`,
+  });
+  await goto("http://localhost:3000/login");
+  await sleep(500);
+  const { data: loginData } = await Page.captureScreenshot({
+    format: "png",
+    fromSurface: true,
+  });
+  fs.writeFileSync(path.join(OUT, "08-login.png"), Buffer.from(loginData, "base64"));
+  console.log("ok 08-login.png");
 
   await client.close();
   chrome.kill("SIGKILL");
