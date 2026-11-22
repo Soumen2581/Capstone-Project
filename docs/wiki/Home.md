@@ -107,31 +107,31 @@ Improved **consistency**, **scalability**, and reduced **wasted spend** through 
 ## Screenshots
 
 <p align="center">
-  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/01-hero.png" alt="Product site hero" width="900" />
+  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/product-hero-dark.png" alt="Product site hero" width="900" />
 </p>
 
 <p align="center">
-  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/02-agents-roster.png" alt="Specialist agent roster" width="900" />
+  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/product-agents-dark.png" alt="Specialist agent roster" width="900" />
 </p>
 
 <p align="center">
-  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/04-agent-mesh.png" alt="Agent collaboration mesh" width="900" />
+  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/product-mesh-dark.png" alt="Agent collaboration mesh" width="900" />
 </p>
 
 <p align="center">
-  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/05-one-workspace.png" alt="Workspace product tour" width="900" />
+  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/product-workspace-dark.png" alt="Workspace product tour" width="900" />
 </p>
 
 <p align="center">
-  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/06-office-home.png" alt="Command workspace" width="900" />
+  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/product-command-dark.png" alt="Command workspace" width="900" />
 </p>
 
 <p align="center">
-  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/07-settings-providers.png" alt="Settings and providers" width="900" />
+  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/product-settings-dark.png" alt="Settings and providers" width="900" />
 </p>
 
 <p align="center">
-  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/08-login.png" alt="Sign in" width="900" />
+  <img src="https://github.com/Soumen2581/Capstone-Project/raw/master/docs/images/product-login-dark.png" alt="Sign in" width="900" />
 </p>
 
 ## Project Design

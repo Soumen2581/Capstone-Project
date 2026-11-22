@@ -170,11 +170,11 @@ async function main() {
   // Marketing
   await goto("http://localhost:3000/");
   await setNavVisible(true);
-  await shotClip("01-hero.png", await heroClip());
+  await shotClip("product-hero-dark.png", await heroClip());
   for (const [sel, file] of [
-    ["#agents", "02-agents-roster.png"],
-    ["#communication", "04-agent-mesh.png"],
-    ["#workspace", "05-one-workspace.png"],
+    ["#agents", "product-agents-dark.png"],
+    ["#communication", "product-mesh-dark.png"],
+    ["#workspace", "product-workspace-dark.png"],
   ]) {
     await goto("http://localhost:3000/");
     await setNavVisible(false);
@@ -194,7 +194,7 @@ async function main() {
     format: "png",
     fromSurface: true,
   });
-  fs.writeFileSync(path.join(OUT, "06-office-home.png"), Buffer.from(officeData, "base64"));
+  fs.writeFileSync(path.join(OUT, "product-command-dark.png"), Buffer.from(officeData, "base64"));
   console.log("ok 06-office-home.png");
 
   // Settings — taller viewport so provider grid isn't clipped mid-row
@@ -219,7 +219,7 @@ async function main() {
     format: "png",
     fromSurface: true,
   });
-  fs.writeFileSync(path.join(OUT, "07-settings-providers.png"), Buffer.from(settingsData, "base64"));
+  fs.writeFileSync(path.join(OUT, "product-settings-dark.png"), Buffer.from(settingsData, "base64"));
   console.log("ok 07-settings-providers.png");
 
   // Login (no workspace auth) — dark card on dark ground
@@ -244,7 +244,7 @@ async function main() {
     format: "png",
     fromSurface: true,
   });
-  fs.writeFileSync(path.join(OUT, "08-login.png"), Buffer.from(loginData, "base64"));
+  fs.writeFileSync(path.join(OUT, "product-login-dark.png"), Buffer.from(loginData, "base64"));
   console.log("ok 08-login.png");
 
   await client.close();
