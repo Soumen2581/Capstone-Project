@@ -53,13 +53,24 @@ export function AppShell({
   return (
     <div className={`app-shell${collapsed ? " collapsed" : ""}`}>
       <aside className="app-sidebar" aria-label="Workspace navigation">
-        <Link href="/" className="app-sidebar-brand" aria-label={`${BRAND_NAME} marketing site`}>
-          <BrandLogo size={34} variant="mark" />
-          <span className="app-sidebar-brand-text">
-            <strong>{BRAND_NAME}</strong>
-            <span>{BRAND_TAGLINE}</span>
-          </span>
-        </Link>
+        <div className="app-sidebar-head">
+          <Link href="/" className="app-sidebar-brand" aria-label={`${BRAND_NAME} marketing site`}>
+            <BrandLogo size={34} variant="mark" />
+            <span className="app-sidebar-brand-text">
+              <strong>{BRAND_NAME}</strong>
+              <span>{BRAND_TAGLINE}</span>
+            </span>
+          </Link>
+          <button
+            type="button"
+            className="sidebar-toggle"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            onClick={() => setCollapsed((value) => !value)}
+          >
+            {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
+          </button>
+        </div>
 
         <nav className="app-nav" aria-label="Office sections" data-testid="office-tabs">
           {NAV.map((item) => {
@@ -88,9 +99,6 @@ export function AppShell({
           >
             {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
           </button>
-          <div className="sidebar-foot-meta">
-            <ThemeToggle compact />
-          </div>
         </div>
       </aside>
 
@@ -113,6 +121,7 @@ export function AppShell({
             </div>
           </div>
           <div className="app-topbar-actions">
+            <ThemeToggle compact />
             <Link href="/" className="px-btn ghost topbar-site-link">
               Product site
             </Link>
