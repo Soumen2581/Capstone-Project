@@ -4,8 +4,11 @@ import Link from "next/link";
 
 import { SectionAmbient } from "@/components/marketing/SectionAmbient";
 import { SectionReveal } from "@/components/marketing/SectionReveal";
+import { useWorkspaceAuthed } from "@/lib/useWorkspaceAuth";
 
 export function FinalCTA() {
+  const authed = useWorkspaceAuthed();
+
   return (
     <section className="mkt-section mkt-cta">
       <SectionAmbient variant="veil" />
@@ -15,12 +18,20 @@ export function FinalCTA() {
           <h2 className="mkt-title">Give your AI team a task.</h2>
           <p className="mkt-body">Open the office, describe the brief, and watch specialists collaborate.</p>
           <div className="mkt-hero-cta">
-            <Link href="/signup" className="mkt-btn mkt-btn-primary mkt-btn-lg">
-              Sign up
-            </Link>
-            <Link href="/login" className="mkt-btn mkt-btn-ghost mkt-btn-lg">
-              Log in
-            </Link>
+            {authed ? (
+              <Link href="/office" className="mkt-btn mkt-btn-primary mkt-btn-lg">
+                Open workspace
+              </Link>
+            ) : (
+              <>
+                <Link href="/signup" className="mkt-btn mkt-btn-primary mkt-btn-lg">
+                  Sign up
+                </Link>
+                <Link href="/login" className="mkt-btn mkt-btn-ghost mkt-btn-lg">
+                  Log in
+                </Link>
+              </>
+            )}
           </div>
         </SectionReveal>
       </div>
@@ -29,6 +40,8 @@ export function FinalCTA() {
 }
 
 export function MarketingFooter() {
+  const authed = useWorkspaceAuthed();
+
   return (
     <footer className="mkt-footer">
       <div className="mkt-grid mkt-footer-inner">
@@ -39,8 +52,14 @@ export function MarketingFooter() {
         <nav aria-label="Footer">
           <a href="#agents">Agents</a>
           <a href="#how-it-works">How it works</a>
-          <Link href="/login">Log in</Link>
-          <Link href="/signup">Sign up</Link>
+          {authed ? (
+            <Link href="/office">Open workspace</Link>
+          ) : (
+            <>
+              <Link href="/login">Log in</Link>
+              <Link href="/signup">Sign up</Link>
+            </>
+          )}
         </nav>
       </div>
     </footer>

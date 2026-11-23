@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 
 import { BrandWordmark } from "@/components/BrandLogo";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useWorkspaceAuthed } from "@/lib/useWorkspaceAuth";
 
 const LINKS = [
   { href: "#agents", label: "Agents" },
@@ -16,6 +17,7 @@ const LINKS = [
 export function MarketingNav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const authed = useWorkspaceAuthed();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -37,12 +39,20 @@ export function MarketingNav() {
         </nav>
         <div className="mkt-nav-actions">
           <ThemeToggle compact className="mkt-theme-toggle" />
-          <Link href="/login" className="mkt-btn mkt-btn-ghost">
-            Log in
-          </Link>
-          <Link href="/signup" className="mkt-btn mkt-btn-primary">
-            Sign up
-          </Link>
+          {authed ? (
+            <Link href="/office" className="mkt-btn mkt-btn-primary">
+              Open workspace
+            </Link>
+          ) : (
+            <>
+              <Link href="/login" className="mkt-btn mkt-btn-ghost">
+                Log in
+              </Link>
+              <Link href="/signup" className="mkt-btn mkt-btn-primary">
+                Sign up
+              </Link>
+            </>
+          )}
           <button
             type="button"
             className="mkt-nav-menu"
@@ -62,12 +72,20 @@ export function MarketingNav() {
             </a>
           ))}
           <ThemeToggle />
-          <Link href="/login" className="mkt-btn mkt-btn-ghost" onClick={() => setOpen(false)}>
-            Log in
-          </Link>
-          <Link href="/signup" className="mkt-btn mkt-btn-primary" onClick={() => setOpen(false)}>
-            Sign up
-          </Link>
+          {authed ? (
+            <Link href="/office" className="mkt-btn mkt-btn-primary" onClick={() => setOpen(false)}>
+              Open workspace
+            </Link>
+          ) : (
+            <>
+              <Link href="/login" className="mkt-btn mkt-btn-ghost" onClick={() => setOpen(false)}>
+                Log in
+              </Link>
+              <Link href="/signup" className="mkt-btn mkt-btn-primary" onClick={() => setOpen(false)}>
+                Sign up
+              </Link>
+            </>
+          )}
         </div>
       )}
     </header>
