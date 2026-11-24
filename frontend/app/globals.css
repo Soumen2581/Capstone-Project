@@ -1431,6 +1431,31 @@ html.mkt-fluid .mkt-footer {
   z-index: 30;
 }
 
+/* Desktop: pin the sidebar to the window so it always reaches the bottom edge,
+   even when page content is taller than the layout (e.g. long Command chats). */
+@media (min-width: 961px) {
+  .app-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100vh;
+    width: var(--sidebar-w);
+    box-sizing: border-box;
+    /* 20px matches the Next.js dev-tools "N" badge offset, so the collapse
+       button lines up with it in development. */
+    padding-bottom: 20px;
+  }
+
+  .app-shell.collapsed .app-sidebar {
+    width: var(--sidebar-w-collapsed);
+  }
+
+  .app-main {
+    grid-column: 2;
+  }
+}
+
 .app-sidebar-brand {
   display: flex;
   align-items: center;
@@ -1439,6 +1464,61 @@ html.mkt-fluid .mkt-footer {
   text-decoration: none;
   color: var(--text);
   min-height: 48px;
+}
+
+.app-sidebar-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.app-sidebar-head .app-sidebar-brand {
+  flex: 1;
+  min-width: 0;
+}
+
+.app-sidebar-head .sidebar-toggle {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+}
+
+/* Collapsed rail (ChatGPT-style): only the Agent Mesh logo shows. On hover or
+   keyboard focus the logo turns into the same boxed sidebar button used when the
+   sidebar is open; clicking it expands the sidebar. */
+.app-shell.collapsed .app-sidebar-head {
+  position: relative;
+  justify-content: center;
+}
+
+.app-shell.collapsed .app-sidebar-head .app-sidebar-brand {
+  padding: 4px 0;
+  justify-content: center;
+  transition: opacity 0.15s ease;
+}
+
+.app-shell.collapsed .app-sidebar-head .sidebar-toggle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 36px;
+  height: 36px;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+/* Swap on mouse hover, or on keyboard focus only (:focus-visible) — a mouse
+   click leaves the button focused, and :focus-within would keep the logo hidden. */
+.app-shell.collapsed .app-sidebar-head:hover .sidebar-toggle,
+.app-shell.collapsed .app-sidebar-head:has(.sidebar-toggle:focus-visible) .sidebar-toggle {
+  opacity: 1;
+}
+
+.app-shell.collapsed .app-sidebar-head:hover .app-sidebar-brand,
+.app-shell.collapsed .app-sidebar-head:has(.sidebar-toggle:focus-visible) .app-sidebar-brand {
+  opacity: 0;
 }
 
 .app-sidebar-brand-text {
@@ -1517,9 +1597,16 @@ html.mkt-fluid .mkt-footer {
 .app-sidebar-foot {
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   gap: var(--space-2);
   padding-top: var(--space-3);
   border-top: 1px solid var(--border);
+}
+
+/* Collapsed rail: hide the bottom button (it would sit on the Next.js "N"
+   badge); the top button next to the logo still expands the sidebar. */
+.app-shell.collapsed .app-sidebar-foot {
+  display: none;
 }
 
 .app-main {

@@ -8,8 +8,11 @@ import AnimatedContent from "@/components/visuals/interactions/AnimatedContent";
 import { AmbientBackground } from "@/components/visuals/backgrounds/AmbientBackground";
 import { BrandGradientText } from "@/components/visuals/text/BrandGradientText";
 import { BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
+import { useWorkspaceAuthed } from "@/lib/useWorkspaceAuth";
 
 export function HeroSection() {
+  const authed = useWorkspaceAuthed();
+
   return (
     <section className="mkt-hero" id="top">
       <AmbientBackground variant="threads" className="mkt-hero-ambient" />
@@ -54,12 +57,20 @@ export function HeroSection() {
             blur={0}
           >
             <div className="mkt-hero-cta">
-              <Link href="/signup" className="mkt-btn mkt-btn-primary mkt-btn-lg">
-                Sign up
-              </Link>
-              <Link href="/login" className="mkt-btn mkt-btn-ghost mkt-btn-lg">
-                Log in
-              </Link>
+              {authed ? (
+                <Link href="/office" className="mkt-btn mkt-btn-primary mkt-btn-lg">
+                  Open workspace
+                </Link>
+              ) : (
+                <>
+                  <Link href="/signup" className="mkt-btn mkt-btn-primary mkt-btn-lg">
+                    Sign up
+                  </Link>
+                  <Link href="/login" className="mkt-btn mkt-btn-ghost mkt-btn-lg">
+                    Log in
+                  </Link>
+                </>
+              )}
             </div>
           </AnimatedContent>
         </div>
